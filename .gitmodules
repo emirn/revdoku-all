@@ -1,6 +1,3 @@
-[submodule "revdoku"]
-	path = revdoku
-	url = git@github.com:revdoku/revdoku.git
 [submodule "revdoku-ee"]
 	path = revdoku-ee
 	url = git@github.com:emirn/revdoku-ee.git

@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 #
-# clean-revdoku-core-folder.sh — wipe the published Core tree at
-# ../revdoku/ (or a custom path) but PRESERVE the operator's local files
-# listed in PRESERVE_AT_DEST inside ee/scripts/build-core.sh.
+# core-clean-folder.sh — wipe the published Core tree at ../revdoku/
+# (or a custom path) but PRESERVE the operator's local files listed in
+# PRESERVE_AT_DEST inside ee/scripts/build-core.sh.
 #
 # Reusable from any wrapper that wants a "fresh tree" before re-running
 # build-core.sh:
-#   - wipe-build-core.sh — uses it before regenerating Core in place
-#   - docker-build-and-run-core.sh — can use it before a clean Docker run
-#   - manual ops — `bash clean-revdoku-core-folder.sh` from a fresh shell
+#   - core-copy.sh                — uses it before regenerating Core in place
+#   - core-docker-rebuild-run.sh  — can be inserted ahead of the rebuild
+#   - manual ops                  — `bash core-clean-folder.sh` from a shell
+#
+# Note: this only touches files on disk under ../revdoku/. It does NOT
+# touch the Docker `storage` volume (the SQLite DBs). For that, use
+# core-docker-reset.sh, which prompts for confirmation.
 #
 # Usage:
-#   clean-revdoku-core-folder.sh                # target: ../revdoku
-#   clean-revdoku-core-folder.sh /path/to/tree  # target: explicit path
+#   core-clean-folder.sh                # target: ../revdoku
+#   core-clean-folder.sh /path/to/tree  # target: explicit path
 #
 # Exit code 0 even if the tree didn't exist (idempotent).
 set -euo pipefail
