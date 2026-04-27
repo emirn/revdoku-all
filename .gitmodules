@@ -4,3 +4,6 @@
 [submodule "scripts-common"]
 	path = scripts-common
 	url = git@github.com:emirn/scripts-common.git
+[submodule "revdoku"]
+	path = revdoku
+	url = git@github.com:revdoku/revdoku.git
