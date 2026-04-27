@@ -1,0 +1,59 @@
+# Revdoku self-host. Single container running Rails (port 80) +
+# doc-api (port 4001, internal). bin/docker-entrypoint migrates the DB,
+# spawns doc-api in the background, then execs Rails.
+#
+# Quickstart:
+#   1. cp env.example .env.local  &&  fill in [REQUIRED] values
+#   2. ./bin/start                # or: docker compose up
+#   3. open http://localhost:3000
+#
+# Image defaults to GHCR multi-arch; falls back to a local build from
+# Dockerfile if the pull fails. Override with REVDOKU_IMAGE in .env.local.
+
+services:
+  app:
+    image: ${REVDOKU_IMAGE:-ghcr.io/revdoku/revdoku-app:latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Use the published GHCR image as a layer cache when building
+      # locally (`bin/start --build`). The expensive base layer
+      # (apt-get update + install of poppler / canvas / libvips deps)
+      # is identical to what's already in the registry image — Docker
+      # reuses it, dropping cold local builds from ~14 min to ~3 min.
+      # Compose silently ignores the cache_from entry when the image
+      # isn't pullable (offline, private package, fork without publish).
+      cache_from:
+        - ${REVDOKU_IMAGE:-ghcr.io/revdoku/revdoku-app:latest}
+    ports:
+      - "${REVDOKU_PORT:-3000}:80"
+    restart: unless-stopped
+    env_file:
+      - .env.local
+    environment:
+      RAILS_LOG_TO_STDOUT: "true"
+      RAILS_SERVE_STATIC_FILES: "true"
+      REVDOKU_EDITION: "core"
+      REVDOKU_DOC_API_URL: "http://localhost:4001"
+      # `local` keeps uploads in the storage volume below. Set to
+      # `amazon` in .env.local for S3 / R2 / B2 / Spaces / MinIO.
+      ACTIVE_STORAGE_SERVICE: "${ACTIVE_STORAGE_SERVICE:-local}"
+      DATABASE_PATH:       "/rails/storage/production.sqlite3"
+      CACHE_DATABASE_PATH: "/rails/storage/production_cache.sqlite3"
+      QUEUE_DATABASE_PATH: "/rails/storage/production_queue.sqlite3"
+      CABLE_DATABASE_PATH: "/rails/storage/production_cable.sqlite3"
+      AUDIT_DATABASE_PATH: "/rails/storage/production_audit.sqlite3"
+    volumes:
+      # SQLite DBs + ActiveStorage uploads (when ACTIVE_STORAGE_SERVICE=local).
+      # `docker compose down -v` WIPES this — back up first.
+      - storage:/rails/storage
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:80/up"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
+
+volumes:
+  storage:
+    name: revdoku_storage

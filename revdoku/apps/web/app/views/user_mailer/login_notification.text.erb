@@ -1,0 +1,22 @@
+REVDOKU
+
+Hi <%= @user.first_name.presence || "there" %>,
+
+<% if @new_device %>
+Your Revdoku account <%= @user_email %> was just used to sign in from a new or unrecognized device.
+<% else %>
+We detected a sign-in to your Revdoku account <%= @user_email %>.
+<% end %>
+
+Date & Time: <%= @signed_in_at.strftime("%B %d, %Y at %I:%M %p %Z") %>
+Device: <%= @device_summary %>
+<% if @show_ip %>
+IP Address: <%= @ip_address %>
+<% end %>
+
+Don't recognize this activity?
+
+If you think your account may have been compromised, please contact us immediately at support@revdoku.com.
+
+---
+We were unable to determine if you had previously signed in with this device before. This notification is common if you are signing in from a new device or a new browser, have deleted your cookies, or are accessing your account in incognito mode.

@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# =============================================================================
+# Revdoku Development Environment Startup Script (Foreman)
+# =============================================================================
+#
+# Runs every entry in Procfile.dev in parallel and aggregates their logs.
+# Pure-Ruby (the foreman gem); no tmux, no Go binary — works on macOS, WSL2,
+# and native Windows.
+#
+# Switched from Overmind 2026-04-25: we never used `overmind restart X` or
+# `overmind connect X` in practice, so the second-terminal control daemon
+# wasn't earning its WSL/tmux complexity. Ctrl+C in this terminal stops
+# everything; re-run this script to start back up.
+
+# Resolve repo root (parent of bin/)
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$REPO_ROOT"
+
+# Suppress Bundler 2.6.9 + RVM "already initialized constant Gem::Platform::*"
+# warnings that fire on every Ruby subprocess foreman spawns (web, css, worker)
+# plus the pre-foreman db:migrate / runner invocations. The warnings are
+# cosmetic — Bundler reloads platform.rb once per process — but they bury
+# real output under ~50 noise lines per restart. Setting `-W0` here so all
+# child Ruby processes inherit it. Drop this line if you ever need to see
+# Ruby's own deprecation warnings during dev.
+export RUBYOPT="-W0 ${RUBYOPT:-}"
+
+# Pre-foreman Rails invocations (db:migrate + secondary-schema runner) trigger
+# Rails boot, which fires the AI-provider audit initializer twice. Foreman-
+# launched web/worker still print it; that's the one operators read.
+export REVDOKU_SKIP_BOOT_BANNERS=1
+
+# ─── Shared env preflight ────────────────────────────────────────────────
+# Same checks bin/start runs before docker compose up: .env.local presence,
+# required secrets (SECRET_KEY_BASE / LOCKBOX_MASTER_KEY / PREFIX_ID_SALT /
+# REVDOKU_DOC_API_KEY), format validation, AI provider empty-string warning.
+# Aborts on hard errors with a plain-English fix; warnings (e.g. missing
+# bootstrap admin) print but don't block. Use --quiet so the happy-path
+# "✓ env preflight OK" line stays out of the way of the Foreman launch
+# banner — the warnings (the part operators need to see) still print.
+bin/preflight-env --quiet || exit $?
+
+# Check for foreman (provided by apps/web's :development bundle group)
+if ! (cd apps/web && bundle exec foreman --version >/dev/null 2>&1); then
+  echo "foreman gem not installed. Install with:"
+  echo "  cd apps/web && bundle install"
+  exit 1
+fi
+
+echo "Starting Revdoku development environment..."
+
+# Kill existing processes on required ports
+for port in 3036 3000 4001; do
+    lsof -ti :$port | xargs kill -9 2>/dev/null || true
+done
+
+# Kill any orphaned revdoku-doc-api/tsx processes from previous sessions
+pkill -f "tsx watch src/server.ts" 2>/dev/null || true
+pkill -f "pino-pretty --colorize" 2>/dev/null || true
+
+# Skip `npm install` when node_modules is already in sync with the lockfile
+# — that's the common case on a warm restart. We touch a marker after a
+# successful install; if the marker is newer than package-lock.json, we
+# trust the existing tree. Saves ~30s per restart and keeps the dev console
+# free of the npm audit / funding / deprecation chorus on every boot.
+maybe_npm_install() {
+  local dir="$1"
+  local lock="$dir/package-lock.json"
+  local marker="$dir/node_modules/.revdoku-installed"
+  [[ -f "$lock" ]] || return 0
+  if [[ -d "$dir/node_modules" && -f "$marker" && "$marker" -nt "$lock" ]]; then
+    return 0  # node_modules is fresher than the lockfile — skip
+  fi
+  ( cd "$dir" && npm install ) || return 1
+  mkdir -p "$dir/node_modules" && touch "$marker"
+}
+
+# Build shared packages
+echo "Building shared schemas..."
+maybe_npm_install apps/shared/js-packages/revdoku-lib || exit 1
+( cd apps/shared/js-packages/revdoku-lib && npm run build ) || exit 1
+
+# Run primary migrations, then load schema for any secondary DB whose
+# canonical table is missing. Plain `db:migrate` only touches the primary,
+# and `db:prepare` won't reload schema into an existing-but-empty secondary
+# (it sees `schema_migrations` already there and skips schema:load). Without
+# this, `worker.1` crashes on first boot with "Could not find table
+# solid_queue_processes" when the queue DB exists but is empty (e.g. fresh
+# checkout, build that ships empty .sqlite3 files, or after a manual reset).
+echo "Running database migrations..."
+(cd apps/web && bin/rails db:migrate) || {
+    echo "Warning: Migration failed, but continuing..."
+}
+
+echo "Ensuring secondary DB schemas (queue/cache/cable/audit)..."
+(bash -lc 'cd apps/web && bin/rails runner "
+  pairs = {
+    queue: \"solid_queue_processes\",
+    cache: \"solid_cache_entries\",
+    cable: \"solid_cable_messages\",
+    audit: \"audit_logs\"
+  }
+  pairs.each do |db, table|
+    next unless ActiveRecord::Base.configurations.configs_for(env_name: Rails.env, name: db.to_s)
+    ActiveRecord::Base.establish_connection(db)
+    has = ActiveRecord::Base.connection.data_source_exists?(table)
+    ActiveRecord::Base.establish_connection(:primary)
+    unless has
+      puts \"  loading schema for #{db} DB (#{table} missing)\"
+      system(\"bin/rails\", \"db:schema:load:#{db}\") || abort(\"schema:load:#{db} failed\")
+    end
+  end
+"') || {
+    echo "Warning: Secondary schema check failed, but continuing..."
+}
+
+# Install frontend and revdoku-doc-api deps (only when lockfile changed —
+# see maybe_npm_install above).
+maybe_npm_install apps/web || exit 1
+maybe_npm_install apps/services/revdoku-doc-api || exit 1
+
+echo ""
+echo "========================================"
+echo "Starting all services via Foreman..."
+echo "  Rails:             http://localhost:3000"
+echo "  Frontend:          http://localhost:3000/envelopes"
+echo "  revdoku-doc-api:   http://localhost:4001"
+echo "========================================"
+echo ""
+echo "Ctrl+C stops the whole stack. Re-run this script to restart."
+echo ""
+
+# foreman lives in apps/web's bundle. -d anchors Procfile entries' relative
+# `cd apps/...` paths to the repo root, regardless of which dir bundle ran in.
+exec bash -lc "cd apps/web && bundle exec foreman start -f \"$REPO_ROOT/Procfile.dev\" -d \"$REPO_ROOT\""

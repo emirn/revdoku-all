@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+#
+# bin/start — preflight + docker compose up wrapper.
+#
+# Runs bin/preflight-env (shared with bin/dev) for env-correctness
+# checks, verifies Docker is reachable, stops any previous container to
+# avoid port-binding fights, then forwards all args to `docker compose
+# up`. Examples:
+#   ./bin/start              # pull prebuilt GHCR image (or use cached)
+#   ./bin/start -d           # detached
+#   ./bin/start --build      # force a local build from Dockerfile —
+#                              maintainers / contributors testing source
+#                              changes; takes 5-10 min on a cold cache.
+#
+# Default behaviour is intentionally pull-first: every push to main of
+# the upstream repo publishes a multi-arch image to ghcr.io (see
+# .github/workflows/docker-publish.yml). End users get a 30-second pull
+# instead of a 10-minute build. Compose falls back to a local build
+# automatically if the pull fails (offline, fork without published
+# image, etc.) — the Dockerfile in this directory is the build source.
+
+set -euo pipefail
+
+# Run from the project root regardless of where the user invoked us from.
+cd "$(dirname "$0")/.."
+
+if [[ -t 2 && -z "${NO_COLOR:-}" ]]; then
+  c_red=$'\e[31m'; c_grn=$'\e[32m'; c_ylw=$'\e[33m'; c_bld=$'\e[1m'; c_dim=$'\e[2m'; c_off=$'\e[0m'
+else
+  c_red=; c_grn=; c_ylw=; c_bld=; c_dim=; c_off=
+fi
+
+heading() { echo "" >&2; echo "${c_bld}$*${c_off}" >&2; }
+note()    { echo "${c_dim}   $*${c_off}" >&2; }
+
+# ─── Shared env preflight ────────────────────────────────────────────────
+# All .env.local + secret + AI-key checks live here. Exits non-zero on any
+# hard error; we let it surface its own message and bail.
+bin/preflight-env
+
+# ─── Docker toolchain ────────────────────────────────────────────────────
+if ! command -v docker >/dev/null 2>&1; then
+  heading "Docker isn't installed on this machine."
+  note "Revdoku runs inside Docker, so Docker must be installed first."
+  note ""
+  note "  Mac / Windows:  install Docker Desktop"
+  note "                  https://docs.docker.com/get-docker/"
+  note "  Linux:          install Docker Engine"
+  note "                  https://docs.docker.com/engine/install/"
+  echo "" >&2
+  exit 1
+fi
+
+if ! docker info >/dev/null 2>&1; then
+  heading "Docker is installed, but it's not running."
+  note "Start Docker and try again:"
+  note ""
+  note "  Mac / Windows:  open the Docker Desktop app and wait for the"
+  note "                  whale icon in the menu bar to stop animating."
+  note "  Linux:          ${c_bld}sudo systemctl start docker${c_off}"
+  echo "" >&2
+  exit 1
+fi
+
+if ! docker compose version >/dev/null 2>&1; then
+  heading "The 'docker compose' plugin isn't installed."
+  note "Update Docker Desktop to a recent version, or install the compose"
+  note "plugin on Linux:"
+  note ""
+  note "  https://docs.docker.com/compose/install/"
+  echo "" >&2
+  exit 1
+fi
+
+# Free the port: a leftover container blocks the new one's bind.
+if docker compose ps --status running --quiet 2>/dev/null | grep -q .; then
+  echo "${c_ylw}!${c_off} stopping previously-running Revdoku container" >&2
+  docker compose down --remove-orphans >/dev/null 2>&1 || true
+fi
+
+# Pull-first: try the prebuilt GHCR image with explicit feedback. If
+# the pull fails (private package, not yet published, offline), surface
+# the reason and fall back to a local build automatically. `up` never
+# touches the storage volume — only `down -v` does. Pass --build to
+# skip the pull and force a rebuild from local source.
+#
+# We do the pull as a separate step (not relying on Compose's silent
+# fallback) so the user sees a 30-second pull progress bar OR a clear
+# error explaining why a build is starting instead.
+FORCE_BUILD=0
+for arg in "$@"; do
+  [[ "$arg" == "--build" ]] && FORCE_BUILD=1
+done
+
+if [[ $FORCE_BUILD -eq 0 ]]; then
+  IMAGE="${REVDOKU_IMAGE:-ghcr.io/revdoku/revdoku-app:latest}"
+  echo "${c_grn}${c_bld}✓${c_off} preflight OK — pulling prebuilt image: ${IMAGE}"
+  if docker pull "$IMAGE" 2>&1 | tail -5; then
+    echo "${c_grn}${c_bld}✓${c_off} image ready — starting Revdoku"
+    exec docker compose up "$@"
+  fi
+  echo ""
+  echo "${c_ylw}!${c_off} pull failed — check that the package exists and is Public at:"
+  echo "${c_dim}    https://github.com/revdoku/revdoku/pkgs/container/revdoku-app${c_off}"
+  echo "${c_ylw}!${c_off} falling back to local build (one-time, ~3-10 min)..."
+  echo ""
+fi
+
+echo "${c_grn}${c_bld}✓${c_off} starting Revdoku (local build)"
+exec docker compose up --build "$@"

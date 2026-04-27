@@ -1,0 +1,46 @@
+# Docker build context optimization
+# Only apps/shared/, apps/web/, and apps/services/dserver/ are needed
+
+# Submodules
+ee/scripts-common/
+ee/references/
+ee/sample-apps/
+
+# Documentation & tools
+ee/docs/
+ee/tools/
+
+# Git & CI
+.git/
+.github/
+.gitmodules
+.gitignore
+
+# Stale local build artefacts. tsc's outDir inside apps/services/revdoku-doc-api
+# is `build/` and is gitignored, but can persist on a maintainer's disk from
+# an older package name. Excluding here keeps direct-from-source Docker builds
+# honest even if the source tree has cruft.
+apps/services/revdoku-doc-api/build/
+apps/services/revdoku-doc-api/dist/
+apps/shared/js-packages/revdoku-lib/dist/
+
+# Deployment configs (already inside image via COPY apps/web/)
+deployment/
+
+# Environment files
+.env*
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Root-level dirs and files not needed in build
+bin/
+ci/
+samples/
+scripts/
+tests/
+tmp/
+*.md
+LICENSE
+build-all.sh

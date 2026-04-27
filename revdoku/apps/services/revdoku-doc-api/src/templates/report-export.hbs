@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{title}} - Review Report - created with REVDOKU</title>
+  <!--STYLES_BEGIN-->
+  <style>
+    body {
+      font-family: {
+          {
+            {
+            font_family_css
+          }
+        }
+      }
+
+      ;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media print {
+      #revdoku-toolbar, #revdoku-panel, .revdoku-panel-overlay, .revdoku-gear {
+        display: none !important;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .report-container {
+        border: none;
+        border-radius: 0;
+      }
+
+      .page-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      .page-section img {
+        page-break-inside: avoid;
+      }
+
+      .page-header {
+        page-break-after: avoid;
+      }
+
+      .report-header {
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      .report-header+* {
+        page-break-before: avoid;
+        break-before: avoid;
+      }
+
+      .revdoku-gear {
+        display: none !important;
+      }
+
+      .revdoku-panel-overlay {
+        display: none !important;
+      }
+
+      .revdoku-img-shimmer {
+        animation: none !important;
+      }
+    }
+
+    /* Image loading placeholder — shimmer shows as img background until decoded */
+    .revdoku-img-shimmer {
+      background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+      background-size: 200% 100%;
+      animation: revdoku-shimmer 1.5s infinite;
+    }
+
+    @keyframes revdoku-shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+  </style>
+  <!--STYLES_END-->
+  <!--HEADER_SNIPPET-->
+</head>
+
+<body data-initial-check-filter="{{initial_check_filter}}">
+  <!--TOOLBAR_BEGIN-->
+  <div id="revdoku-toolbar" style="position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid #e2e8f0;padding:6px 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+    <!-- Check filter -->
+    <div id="revdoku-filter-wrap" style="position:relative;display:inline-block;">
+      <button type="button" id="revdoku-filter-btn" style="height:26px;padding:0 8px;border:1px solid #cbd5e1;border-radius:4px;font-size:11px;background:#fff;color:#374151;cursor:pointer;display:inline-flex;align-items:center;gap:4px;">
+        <span id="revdoku-filter-label" style="display:inline-flex;align-items:center;gap:4px;"></span>
+        <span style="font-size:8px;color:#94a3b8;">▾</span>
+      </button>
+      <div id="revdoku-filter-menu" style="display:none;position:absolute;top:100%;left:0;margin-top:2px;background:#fff;border:1px solid #cbd5e1;border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,0.12);z-index:1002;min-width:170px;padding:4px 0;font-size:11px;">
+        <div data-filter-value="all" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="display:inline-flex;gap:1px;"><span style="color:#dc2626;font-size:10px;line-height:1;">●</span><span style="color:#d97706;font-size:10px;line-height:1;">●</span><span style="color:#16a34a;font-size:10px;line-height:1;">●</span></span> All</div>
+        <div data-filter-value="failed" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="display:inline-flex;gap:1px;"><span style="color:#dc2626;font-size:10px;line-height:1;">●</span><span style="color:#d97706;font-size:10px;line-height:1;">●</span></span> Issues &amp; changes</div>
+        <div data-filter-value="failed_only" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="color:#dc2626;font-size:10px;line-height:1;">●</span> Failed only</div>
+        <div data-filter-value="passed" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="color:#16a34a;font-size:10px;line-height:1;">●</span> Passed</div>
+        {{#if has_changes_checks}}<div data-filter-value="changes" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="color:#d97706;font-size:10px;line-height:1;">●</span> Changes</div>{{/if}}
+        {{#if has_recheck_checks}}<div data-filter-value="rechecks" class="revdoku-filter-item" style="padding:5px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;color:#334155;"><span style="color:#6366f1;font-size:10px;line-height:1;">●</span> Rechecks</div>{{/if}}
+      </div>
+    </div>
+
+    <!-- Font scale -->
+    <div style="display:inline-flex;border:1px solid #cbd5e1;border-radius:4px;overflow:hidden;">
+      <button id="revdoku-font-down" style="height:26px;padding:0 6px;border:none;background:#fff;cursor:pointer;font-size:11px;color:#6b7280;border-right:1px solid #cbd5e1;">A&minus;</button>
+      <button id="revdoku-font-up" style="height:26px;padding:0 6px;border:none;background:#fff;cursor:pointer;font-size:11px;color:#6b7280;">A+</button>
+    </div>
+
+    <!-- Checks toggle -->
+    <label style="display:flex;align-items:center;gap:4px;cursor:pointer;color:#6b7280;font-size:11px;">
+      <input type="checkbox" id="revdoku-checks-toggle"{{#if initial_show_annotations}} checked{{/if}} style="width:13px;height:13px;cursor:pointer;" />
+      Checks
+    </label>
+
+    <span style="color:#e2e8f0;">|</span>
+
+    <!-- Highlight mode -->
+    <select id="revdoku-highlight-select" style="height:26px;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:11px;background:#fff;color:#374151;cursor:pointer;">
+      <option value="0"{{#if (eq initial_highlight_mode 0)}} selected{{/if}}>Rectangle</option>
+      <option value="1"{{#if (eq initial_highlight_mode 1)}} selected{{/if}}>Dot</option>
+      <option value="2"{{#if (eq initial_highlight_mode 2)}} selected{{/if}}>Underline</option>
+      <option value="3"{{#if (eq initial_highlight_mode 3)}} selected{{/if}}>Bracket</option>
+    </select>
+
+    <!-- Font family -->
+    <select id="revdoku-font-family-select" style="height:26px;padding:2px 6px;border:1px solid #cbd5e1;border-radius:4px;font-size:11px;background:#fff;color:#374151;cursor:pointer;">
+      <option value="sans-serif">Arial</option>
+      <option value="serif">Times New Roman</option>
+      <option value="monospace">Courier New</option>
+    </select>
+
+    <!-- Align to top -->
+    <label style="display:flex;align-items:center;gap:4px;cursor:pointer;color:#6b7280;font-size:11px;">
+      <input type="checkbox" id="revdoku-align-top" style="width:13px;height:13px;cursor:pointer;" />
+      Align top
+    </label>
+
+    <!-- Options gear (moved from floating position) -->
+    <div style="margin-left:auto;">
+      <button id="revdoku-gear-btn"
+        style="background:#fff;border:1px solid #94a3b8;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;color:#475569;display:flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+        <span style="font-size:11px;font-weight:500;">Options</span>
+      </button>
+    </div>
+  </div>
+  <!--TOOLBAR_END-->
+
+  <!--GEAR_BUTTON_BEGIN-->
+  <!-- Gear button is now inside revdoku-toolbar above -->
+  <!--GEAR_BUTTON_END-->
+
+  <!--OPTIONS_PANEL_BEGIN-->
+  <!-- Panel overlay — positioned below the sticky toolbar -->
+  <div class="revdoku-panel-overlay" id="revdoku-panel"
+    style="display: none; position: fixed; top: 42px; right: 28px; z-index: 1001; background: white; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.14); padding: 6px 0; min-width: 210px; max-height: 80vh; overflow-y: auto;">
+    <label
+      style="display: flex; align-items: center; gap: 6px; padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-group-header" style="accent-color: #6366f1; width: 11px; height: 11px;" {{#if
+        initial_show_group_header}}checked{{/if}} /> Header</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-envelope-title" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_title_info}}checked{{/if}} /> Report Title</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-envelope-datetime" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_envelope_datetime}}checked{{/if}} /> Report Date</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-envelope-revisions-info"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_envelope_revisions_info}}checked{{/if}} /> Revision Info</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-compliance-percent"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_compliance_percent}}checked{{/if}} /> Compliance %</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-ai-model" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_checklist_ai_model}}checked{{/if}} /> AI Model</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-ai-model-details"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_ai_model_details}}checked{{/if}} /> AI Model Details</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-name" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_name}}checked{{/if}} /> Checklist Name</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-compliance-summary" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_compliance_summary}}checked{{/if}} /> Summary Cards</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-revision-comparison" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_revision_comparison}}checked{{/if}} /> Revision Comparison</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-tags" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_tags}}checked{{/if}} /> Tags</label>
+    <div style="height: 1px; background: #e2e8f0; margin: 3px 0;"></div>
+    <label
+      style="display: flex; align-items: center; gap: 6px; padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-group-checklist" style="accent-color: #6366f1; width: 11px; height: 11px;" {{#if
+        initial_show_group_checklist}}checked{{/if}} /> Checklist</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-info" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_info}}checked{{/if}} /> Date & Version</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-general-prompt"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_general_prompt}}checked{{/if}} /> General Prompt</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-rules-summary"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_rules_summary}}checked{{/if}} /> Rules Summary</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-rules-details"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_rules_details}}checked{{/if}} /> Full Rule Text</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-checklist-envelope-rules"
+        style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_checklist_envelope_rules}}checked{{/if}} /> Envelope Rules</label>
+    <div style="height: 1px; background: #e2e8f0; margin: 3px 0;"></div>
+    <label
+      style="display: flex; align-items: center; gap: 6px; padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-group-pages" style="accent-color: #6366f1; width: 11px; height: 11px;" {{#if
+        initial_show_group_pages}}checked{{/if}} /> Pages</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-pages-with-checks" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_pages_with_checks}}checked{{/if}} /> Pages with checks</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-pages-without-checks" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_pages_without_checks}}checked{{/if}} /> Pages without checks</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-page-images" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_page_images}}checked{{/if}} /> Page Previews</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-page-filenames" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_page_filenames}}checked{{/if}} /> File Names</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-page-summary-icons" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_page_summary_icons}}checked{{/if}} /> Page Status Icons</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-check-details" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_check_details}}checked{{/if}} /> Checks with their details</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-extracted-data" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_extracted_data}}checked{{/if}} /> Extracted data (val=…)</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-rules" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_include_rules}}checked{{/if}} /> Rule Text</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-check-attribution" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_check_attribution}}checked{{/if}} /> Checks Source</label>
+    <div style="height: 1px; background: #e2e8f0; margin: 3px 0;"></div>
+    <label
+      style="display: flex; align-items: center; gap: 6px; padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-group-footer" style="accent-color: #6366f1; width: 11px; height: 11px;" {{#if
+        initial_show_group_footer}}checked{{/if}} /> Footer</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-technical-info" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_include_technical_info}}checked{{/if}} /> Activity Log</label>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-document-history" style="accent-color: #6366f1; width: 13px; height: 13px;"
+        {{#if initial_show_document_history}}checked{{/if}} /> Document History</label>
+    <div style="height: 1px; background: #e2e8f0; margin: 3px 0;"></div>
+    <div
+      style="padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8;">
+      Misc</div>
+    <label
+      style="display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 24px; font-size: 11px; color: #334155; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-show-timezone" style="accent-color: #6366f1; width: 13px; height: 13px;" {{#if
+        initial_show_timezone}}checked{{/if}} /> Timezone Labels</label>
+    {{#if user_js_1_output_template}}
+    <div style="height: 1px; background: #e2e8f0; margin: 3px 0;"></div>
+    <label
+      style="display: flex; align-items: center; gap: 6px; padding: 2px 12px 3px; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; cursor: pointer; user-select: none;">
+      <input type="checkbox" id="toggle-user-js-output" style="accent-color: #6366f1; width: 11px; height: 11px;" {{#if
+        initial_show_user_js_1_output}}checked{{/if}} /> User Scripts</label>
+    {{/if}}
+  </div>
+  <!--OPTIONS_PANEL_END-->
+
+  <!--REPORT_CONTAINER_BEGIN-->
+  <div class="report-container"
+    style="max-width: 100%; margin: 0 auto; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 8px; overflow: hidden;">
+    <!--BRANDING_HEADER_BEGIN-->
+    <!-- Always-visible thin brand strip — same rules as the footer: no
+         data-section, no toggle. Understated so it doesn't compete with the
+         report content below. -->
+    <div
+      style="background: #f8fafc; border-bottom: 1px solid #e5e7eb; padding: 6px 16px; font-size: 10px; color: #64748b; display: flex; justify-content: flex-end; align-items: center; gap: 6px;">
+      <span>generated with
+        <a href="https://revdoku.com/?utm_source=report_header"
+           style="color: #64748b; text-decoration: none; font-weight: 600;"
+           onmouseover="this.style.textDecoration='underline'"
+           onmouseout="this.style.textDecoration='none'">Revdoku</a>{{#if app_version}}<span style="color: #94a3b8;">&nbsp;v{{app_version}}</span>{{/if}}</span>
+    </div>
+    <!--BRANDING_HEADER_END-->
+    <!--REPORT_HEADER_BEGIN-->
+    <div class="report-header">
+      <!-- GROUP: HEADER -->
+      <div data-section-group="group-header" style="{{#unless initial_show_group_header}}display:none;{{/unless}}">
+        <!--REPORT_TITLE_BEGIN-->
+        <!-- Title & Header Section — always-visible container with purple border -->
+        <div
+          style="background: #ffffff; color: #1e293b; padding: 20px 24px 16px 24px; border-left: 4px solid #4f46e5; border-bottom: none;">
+          <!-- Envelope Title -->
+          <div data-section="envelope-title" style="{{#unless initial_show_title_info}}display:none;{{/unless}}">
+            <h1 style="margin: 0; font-size: 17px; font-weight: 700; color: #111827;">{{#if is_revised}}<span
+                style="display: inline-block; background: #e0e7ff; color: #4338ca; border: 1px solid #c7d2fe; border-radius: 4px; padding: 1px 6px; font-weight: 600; font-size: 11px; margin-right: 8px; vertical-align: middle;">v{{revision_number}}</span>{{/if}}{{title}}
+            </h1>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6px;">
+            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-width: 0;">
+              <!-- Envelope Revisions Info -->
+              <span data-section="envelope-revisions-info"
+                style="font-size: 12px; font-weight: 600; color: #64748b;{{#unless initial_show_envelope_revisions_info}} display:none;{{/unless}}">{{#if
+                is_revised}}v{{revision_number}}{{#if total_revisions}} of {{total_revisions}}{{/if}}{{#if
+                revision_updated_at}} (updated {{revision_updated_at}}){{/if}}{{/if}}</span>
+              <!-- Compliance Percent (inline) -->
+              <span data-section="compliance-percent"
+                style="font-size: 13px; font-weight: 700; color: {{pass_rate_color}};{{#unless initial_show_compliance_percent}} display:none;{{/unless}}"
+                title="{{passed_count}}/{{total_checks}} passed">{{pass_rate}}%</span>
+            </div>
+            <!-- Envelope Date Time -->
+            <span data-section="envelope-datetime"
+              style="font-size: 11px; color: #94a3b8;{{#unless initial_show_envelope_datetime}} display:none;{{/unless}}">{{short_date}}
+              <span data-section="show-timezone"
+                style="{{#unless initial_show_timezone}}display:none;{{/unless}}">{{timezone_abbr}}</span></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+            <span data-section="checklist-name"
+              style="font-size: 12px; color: #6b7280; display: {{#if initial_show_checklist_name}}inline{{else}}none{{/if}};">{{checklist_name}}
+              &middot; {{total_rules}} rules</span>
+            {{#if ai_model_display_name}}
+            <span data-section="checklist-ai-model"
+              style="display: {{#if initial_show_checklist_ai_model}}inline-flex{{else}}none{{/if}}; align-items: center; gap: 3px; font-size: 10px; font-weight: 500; color: #6366f1; background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 9999px; padding: 1px 8px; white-space: nowrap;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+                <path
+                  d="M12 2a4 4 0 0 1 4 4v1h1a3 3 0 0 1 3 3v2a3 3 0 0 1-3 3h-1v3a4 4 0 0 1-8 0v-3H7a3 3 0 0 1-3-3v-2a3 3 0 0 1 3-3h1V6a4 4 0 0 1 4-4z" />
+                <circle cx="9" cy="10" r="1" fill="currentColor" />
+                <circle cx="15" cy="10" r="1" fill="currentColor" />
+              </svg>
+              {{ai_model_display_name}}
+            </span>
+            {{/if}}
+            {{#if has_tags}}
+            {{#each tags}}
+            <span data-section="tags"
+              style="display: {{#if ../initial_show_tags}}inline-flex{{else}}none{{/if}}; align-items: center; font-size: 10px; font-weight: 500; color: {{this.text}}; background: {{this.bg}}; border: 1px solid {{this.border}}; border-radius: 9999px; padding: 1px 8px; white-space: nowrap;">{{this.name}}</span>
+            {{/each}}
+            {{/if}}
+          </div>
+          {{#if ai_model_display_name}}
+          <!--HEADER_AI_MODEL_DETAILS_BEGIN-->
+          <div data-section="checklist-ai-model-details"
+            style="margin-top: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 11px; color: #475569;{{#unless initial_show_checklist_ai_model_details}} display:none;{{/unless}}">
+            <div style="display: grid; grid-template-columns: auto 1fr; gap: 2px 8px;">
+              <span style="color: #94a3b8;">AI:</span>
+              <span style="font-weight: 500; color: #1f2937;">{{ai_model_display_name}}</span>
+              {{#if ai_model_actual_id}}
+              <span style="color: #94a3b8;">Model:</span>
+              <span>{{#if ai_model_model_name}}<span style="color: #1f2937;">{{ai_model_model_name}}</span> {{/if}}<span
+                  style="font-family: monospace; color: #6b7280;">({{ai_model_actual_id}})</span></span>
+              {{/if}}
+              {{#if ai_model_stars}}
+              <span style="color: #94a3b8;">Rating:</span>
+              <span>
+                <span style="color: #f59e0b;">{{ai_model_stars_display}}</span>
+                {{#if show_pricing}}<span style="color: #94a3b8;"> &middot; {{ai_model_credits_per_page}}
+                  cr/page</span>{{/if}}
+                {{#if ai_model_hipaa}} <span
+                  style="display: inline-flex; align-items: center; padding: 0 4px; border-radius: 3px; font-size: 9px; font-weight: 500; background: #dbeafe; color: #1d4ed8;">HIPAA</span>{{/if}}
+              </span>
+              {{/if}}
+              {{#if ai_model_provider}}
+              <span style="color: #94a3b8;">Provider:</span>
+              <span style="color: #475569;">{{ai_model_provider}}{{#if ai_model_location}},
+                {{ai_model_location}}{{/if}}</span>
+              {{else}}
+              {{#if ai_model_location}}
+              <span style="color: #94a3b8;">Provider:</span>
+              <span style="color: #475569;">{{ai_model_location}}</span>
+              {{/if}}
+              {{/if}}
+              {{#if ai_model_description}}
+              <span style="color: #94a3b8;">About:</span>
+              <span style="color: #94a3b8;">{{ai_model_description}}</span>
+              {{/if}}
+            </div>
+          </div>
+          <!--HEADER_AI_MODEL_DETAILS_END-->
+          {{/if}}
+        </div>
+        <!--REPORT_TITLE_END-->
+
+        <!--SUMMARY_BEGIN-->
+        <!-- Compliance Summary Section -->
+        <div data-section="compliance-summary"
+          style="padding: 0 24px 16px 24px; background: #ffffff; border-left: 4px solid #4f46e5; border-bottom: 1px solid #e5e7eb;{{#unless initial_show_compliance_summary}} display:none;{{/unless}}">
+          <!-- Stat cards row -->
+          <div style="display: flex; align-items: stretch; gap: 10px; margin-bottom: 12px;">
+            <!-- Passed -->
+            <div
+              style="flex: 1; background: #f0fdf4; border-radius: 6px; padding: 10px 14px; border: 1px solid #dcfce7;">
+              <div style="font-size: 20px; font-weight: 700; color: #16a34a;">{{passed_count}}</div>
+              <div
+                style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #4ade80; margin-top: 1px;">
+                Passed</div>
+            </div>
+            <!-- Failed -->
+            {{#if failed_count}}
+            <div
+              style="flex: 1; background: #fef2f2; border-radius: 6px; padding: 10px 14px; border: 1px solid #fecaca;">
+              <div style="font-size: 20px; font-weight: 700; color: #dc2626;">{{failed_count}}</div>
+              <div
+                style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #f87171; margin-top: 1px;">
+                Failed</div>
+            </div>
+            {{else}}
+            <div
+              style="flex: 1; background: #f8fafc; border-radius: 6px; padding: 10px 14px; border: 1px solid #e2e8f0;">
+              <div style="font-size: 20px; font-weight: 700; color: #334155;">0</div>
+              <div
+                style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-top: 1px;">
+                Failed</div>
+            </div>
+            {{/if}}
+            <!-- Total -->
+            <div
+              style="flex: 1; background: #f8fafc; border-radius: 6px; padding: 10px 14px; border: 1px solid #e2e8f0;">
+              <div style="font-size: 20px; font-weight: 700; color: #334155;">{{total_checks}}</div>
+              <div
+                style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #94a3b8; margin-top: 1px;">
+                Total</div>
+            </div>
+            <!-- Score -->
+            <div
+              style="flex: 1; background: #fafafa; border-radius: 6px; padding: 10px 14px; border: 1px solid #e5e7eb; text-align: center;">
+              <div style="font-size: 22px; font-weight: 800; color: {{pass_rate_color}};">{{pass_rate}}%</div>
+              <div
+                style="font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: #9ca3af; margin-top: 1px;">
+                Score</div>
+            </div>
+          </div>
+          <!-- Progress bar -->
+          <div style="background: #f1f5f9; border-radius: 2px; overflow: hidden; height: 3px;">
+            <div style="background: {{pass_rate_color}}; height: 100%; width: {{pass_rate}}%; border-radius: 2px;">
+            </div>
+          </div>
+          {{#if previous_comparison}}
+          <!--REVISION_COMPARISON_BEGIN-->
+          <!-- Previous revision comparison -->
+          <div data-section="revision-comparison"
+            style="display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 11px; color: #6b7280;{{#unless initial_show_revision_comparison}} display:none;{{/unless}}">
+            <span style="font-weight: 600; color: #16a34a;">{{previous_comparison.resolved}}</span> resolved
+            <span style="color: #e5e7eb;">&middot;</span>
+            <span style="font-weight: 600; color: #dc2626;">{{previous_comparison.new_issues}}</span> new
+            <span style="color: #e5e7eb;">&middot;</span>
+            <span style="font-weight: 600; color: #ea580c;">{{previous_comparison.unresolved}}</span> unresolved
+            <span
+              style="margin-left: auto; padding: 1px 8px; border-radius: 9999px; font-size: 10px; font-weight: 600; {{#if pass_rate_improved}}background: #dcfce7; color: #16a34a;{{else}}{{#if pass_rate_declined}}background: #fef2f2; color: #dc2626;{{else}}background: #f3f4f6; color: #6b7280;{{/if}}{{/if}}">vs
+              v{{previous_comparison.prev_revision}}: {{pass_rate_change}}</span>
+          </div>
+          <!--REVISION_COMPARISON_END-->
+          {{/if}}
+        </div>
+        <!--SUMMARY_END-->
+      </div><!-- /group-header -->
+      <!--REPORT_HEADER_END-->
+
+      {{#if user_js_1_output_template}}
+      <!-- User JS Script Output — rendered from template + data via Handlebars -->
+      <div data-section="user-js-output" style="padding: 12px 24px; background: #fef9c3; border-top: 1px solid #facc15; {{#unless initial_show_user_js_1_output}}display:none;{{/unless}}">
+        {{renderUserScript user_js_1_output_template user_js_1_output_data_json}}
+      </div>
+      {{/if}}
+
+      <!--CHECKLIST_SECTION_BEGIN-->
+      <!-- GROUP: CHECKLIST -->
+      <div data-section-group="group-checklist"
+        style="{{#unless initial_show_group_checklist}}display:none;{{/unless}}">
+        <!-- Checklist Section -->
+        <div style="padding: 16px 24px; background: #ffffff; border-top: 1px solid #e5e7eb;">
+          <div
+            style="font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin-bottom: 10px;">
+            Checklist</div>
+          <div style="font-size: 14px; font-weight: 600; color: #1e293b; margin-bottom: 8px;">{{checklist_name}}</div>
+
+          <!--CHECKLIST_INFO_BEGIN-->
+          <!-- Checklist Info -->
+          <div data-section="checklist-info" style="{{#unless initial_show_checklist_info}}display:none;{{/unless}}">
+            <div style="font-size: 11px; color: #6b7280;">
+              {{#if checklist_created_at}}Created: {{checklist_created_at}}{{/if}}{{#if checklist_updated_at}} &middot;
+              Updated: {{checklist_updated_at}}{{/if}}
+              &middot; Version: {{checklist_version}}
+            </div>
+          </div>
+          <!--CHECKLIST_INFO_END-->
+
+          <!--CHECKLIST_GENERAL_PROMPT_BEGIN-->
+          <!-- General Prompt -->
+          {{#if has_checklist_system_prompt}}
+          <div data-section="checklist-general-prompt"
+            style="margin-top: 8px; padding: 8px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 11px; color: #475569; line-height: 1.4;{{#unless initial_show_checklist_general_prompt}}display:none;{{/unless}}">
+            <div
+              style="font-size: 10px; font-weight: 600; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">
+              General Prompt</div>
+            {{checklist_system_prompt}}
+          </div>
+          {{/if}}
+          <!--CHECKLIST_GENERAL_PROMPT_END-->
+
+          <!--CHECKLIST_RULES_SUMMARY_BEGIN-->
+          <!-- Rules Summary -->
+          <div data-section="checklist-rules-summary"
+            style="margin-top: 8px; font-size: 11px; color: #6b7280;{{#unless initial_show_checklist_rules_summary}}display:none;{{/unless}}">
+            {{checklist_rules_count}} checklist rules{{#if has_envelope_rules}} &middot; {{envelope_rules_count}}
+            envelope-only rules{{/if}}
+          </div>
+          <!--CHECKLIST_RULES_SUMMARY_END-->
+
+          <!--CHECKLIST_RULES_BEGIN-->
+          <!-- Rules Details (full list) — inline format: [order] prompt -->
+          {{#if has_checklist_rules}}
+          <div data-section="checklist-rules-details"
+            style="margin-top: 10px;{{#unless initial_show_checklist_rules_details}}display:none;{{/unless}}">
+            <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+              {{#each checklist_rules_list}}
+              <div style="padding: 8px 12px; border-bottom: {{#unless @last}}1px solid #f1f5f9{{else}}none{{/unless}};">
+                <div style="font-size: 11px; color: #374151; line-height: 1.4;">
+                  <span
+                    style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1px solid #cbd5e1; border-radius: 3px; background: #f8fafc; font-size: 9px; font-weight: 700; color: #64748b; margin-right: 6px;">{{this.order}}</span>{{this.prompt}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+          <!--CHECKLIST_RULES_END-->
+
+          <!--ENVELOPE_RULES_BEGIN-->
+          <!-- Envelope-Only Rules — inline format: [order] prompt -->
+          {{#if has_envelope_rules}}
+          <div data-section="checklist-envelope-rules"
+            style="margin-top: 12px;{{#unless initial_show_checklist_envelope_rules}}display:none;{{/unless}}">
+            <div style="font-size: 11px; font-weight: 600; color: #6b7280; margin-bottom: 6px;">Envelope-Only Rules
+            </div>
+            <div style="border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;">
+              {{#each envelope_rules_list}}
+              <div style="padding: 8px 12px; border-bottom: {{#unless @last}}1px solid #f1f5f9{{else}}none{{/unless}};">
+                <div style="font-size: 11px; color: #374151; line-height: 1.4;">
+                  <span
+                    style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: 1px solid #cbd5e1; border-radius: 3px; background: #f8fafc; font-size: 9px; font-weight: 700; color: #64748b; margin-right: 6px;">{{this.order}}</span>{{this.prompt}}
+                </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+          {{/if}}
+          <!--ENVELOPE_RULES_END-->
+        </div>
+      </div><!-- /group-checklist -->
+      <!--CHECKLIST_SECTION_END-->
+
+    </div>
+
+    <!--PAGES_SECTION_BEGIN-->
+    <!-- GROUP: PAGES -->
+    <div data-section-group="group-pages" style="{{#unless initial_show_group_pages}}display:none;{{/unless}}">
+      <!--PAGES_COMPACT_BEGIN-->
+      {{!-- COMPACT MODE: Table layout with small thumbnails --}}
+      {{#if is_compact_mode}}
+      <div style="padding: 0; background: #fefefe; border-top: 1px solid #e5e5e5;">
+        {{#each pages_sections}}
+        <!--PAGE_{{this.page_number}}_BEGIN-->
+        <div class="page-section" data-page-has-checks="{{#if this.has_visible_checks}}true{{else}}false{{/if}}"
+          style="display: flex; border-bottom: 1px solid #e5e5e5; padding: 10px 16px; gap: 16px; align-items: flex-start;{{#if this.has_visible_checks}}{{#unless ../initial_show_pages_with_checks}} display:none;{{/unless}}{{else}}{{#unless ../initial_show_pages_without_checks}} display:none;{{/unless}}{{/if}}">
+          {{!-- Thumbnail column --}}
+          <div data-section="page-images"
+            style="flex-shrink: 0; max-width: {{../max_page_preview_width}}px;{{#unless ../initial_show_page_images}} display:none;{{/unless}}">
+            {{#if this.has_highlighted_image}}
+            {{#if @root.use_svg_mode}}
+            <div style="width: 100%; border: 1px solid #e5e5e5; border-radius: 4px; overflow: hidden;">
+              {{{this.highlighted_image}}}
+            </div>
+            {{else}}
+            <img class="revdoku-img-shimmer" src="data:image/png;base64,{{this.highlighted_image}}"
+              style="width: 100%; height: auto; border: 1px solid #e5e5e5; border-radius: 4px;"
+              alt="Page {{this.page_number}}" />
+            {{/if}}
+            {{else}}
+            <div
+              style="width: 100%; height: 180px; background: #f8fafc; border: 1px solid #e5e5e5; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+              <span style="color: #94a3b8; font-size: 11px;">No preview</span>
+            </div>
+            {{/if}}
+          </div>
+          {{!-- Issues column --}}
+          <div style="flex: 1; min-width: 0;">
+            <div class="page-header"
+              style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-weight: 600; color: #1e293b;">
+                <span data-section="page-filenames"
+                  style="{{#unless ../initial_show_page_filenames}}display:none;{{/unless}}">{{this.filename}} &middot;
+                </span>Page {{this.page_number}} of {{../total_pages}}
+              </span>
+              <span data-section="page-summary-icons"
+                style="font-size: 11px; background: {{this.status_bg}}; color: {{this.status_color}}; padding: 2px 6px; border-radius: 9999px; font-weight: 600;{{#unless ../initial_show_page_summary_icons}} display:none;{{/unless}}">
+                {{#if this.has_issues}}{{this.issue_count}} issue{{#if this.issues_plural}}s{{/if}}{{else}}&#10003;
+                OK{{/if}}
+              </span>
+            </div>
+            <div data-section="check-details" style="{{#unless ../initial_show_check_details}}display:none;{{/unless}}">
+              {{#if this.show_failed_checks}}
+              {{#if this.failed_checks.length}}
+              <div style="color: #374151; line-height: 1.5;">
+                {{#each this.failed_checks}}
+                <div data-check-id="{{this.check_id}}" data-check-passed="false" data-check-filter-type="{{this.check_filter_type}}"
+                  style="margin-bottom: 4px; padding-left: 4px; border-left: 2px solid {{this.border_color}};">
+                  <span
+                    style="color: #ffffff; font-weight: 700; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; border-radius: 50%; background: {{this.badge_bg_color}}; font-size: 9px; opacity: 0.85; vertical-align: middle;">{{this.rule_order}}</span>
+                  {{#if this.is_recheck}}<span style="color: #6366f1; font-weight: 600; vertical-align: middle;"
+                    title="Re-verification of previously failed check">{{{@root.recheck_icon_svg}}} </span>{{/if}}{{#if
+                  this.is_diff}}<span style="color: #f59e0b; font-weight: 600; vertical-align: middle;"
+                    title="Cross-revision change detected">{{{@root.changes_icon_svg}}}
+                  </span>{{/if}}{{{renderCheckDescription this.description}}}{{#if this.data_val}}<span data-section="extracted-data" style="font-family:monospace;font-size:0.82em;color:#92400e;margin-left:6px;opacity:0.55;{{#unless @root.initial_show_extracted_data}}display:none;{{/unless}}">val={{this.data_val}}</span>{{/if}}
+                  <small data-section="check-attribution"
+                    style="color: #94a3b8; margin-left: 6px;{{#unless ../../../initial_show_check_attribution}} display:none;{{/unless}}">{{this.source_title}}
+                    &middot; {{this.rule_origin_label}}{{#if this.created_by}} &middot;
+                    {{this.created_by}}{{/if}}</small>
+                  <div data-section="rules"
+                    style="margin-top: 2px; padding: 3px 6px; background: #f8fafc; border-left: 2px solid #cbd5e1; border-radius: 2px; font-size: 11px; color: #6b7280; line-height: 1.3;{{#unless ../../../initial_include_rules}} display:none;{{/unless}}">
+                    {{this.rule_prompt}}
+                  </div>
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+              {{#if this.has_no_checks}}
+              <div style="color: #16a34a; font-size: 12px;">&#10003; No issues</div>
+              {{/if}}
+              {{#if this.show_passed_checks}}
+              {{#if this.passed_checks.length}}
+              <div style="margin-top: 6px; color: #374151; line-height: 1.5;">
+                {{#each this.passed_checks}}
+                <div data-check-id="{{this.check_id}}" data-check-passed="true" data-check-filter-type="{{this.check_filter_type}}"
+                  style="margin-bottom: 4px; padding-left: 4px; border-left: 2px solid {{this.border_color}};">
+                  <span
+                    style="color: #ffffff; font-weight: 700; margin-right: 4px; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; min-width: 18px; border-radius: 50%; background: {{this.badge_bg_color}}; font-size: 9px; opacity: 0.85; vertical-align: middle;">{{this.rule_order}}</span>
+                  {{#if this.is_recheck}}<span style="color: #6366f1; font-weight: 600; vertical-align: middle;"
+                    title="Re-verification of previously failed check">{{{@root.recheck_icon_svg}}} </span>{{/if}}{{#if
+                  this.is_diff}}<span style="color: #f59e0b; font-weight: 600; vertical-align: middle;"
+                    title="Cross-revision change detected">{{{@root.changes_icon_svg}}}
+                  </span>{{/if}}{{{renderCheckDescription this.description}}}{{#if this.data_val}}<span data-section="extracted-data" style="font-family:monospace;font-size:0.82em;color:#92400e;margin-left:6px;opacity:0.55;{{#unless @root.initial_show_extracted_data}}display:none;{{/unless}}">val={{this.data_val}}</span>{{/if}}
+                  <small data-section="check-attribution"
+                    style="color: #94a3b8; margin-left: 6px;{{#unless ../../../initial_show_check_attribution}} display:none;{{/unless}}">{{this.source_title}}
+                    &middot; {{this.rule_origin_label}}{{#if this.created_by}} &middot;
+                    {{this.created_by}}{{/if}}</small>
+                  <div data-section="rules"
+                    style="margin-top: 2px; padding: 3px 6px; background: #f0fdf4; border-left: 2px solid #86efac; border-radius: 2px; font-size: 11px; color: #6b7280; line-height: 1.3;{{#unless ../../../initial_include_rules}} display:none;{{/unless}}">
+                    {{this.rule_prompt}}
+                  </div>
+                </div>
+                {{/each}}
+              </div>
+              {{/if}}
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        <!--PAGE_{{this.page_number}}_END-->
+        {{/each}}
+      </div>
+      {{/if}}
+      <!--PAGES_COMPACT_END-->
+
+      <!--PAGES_DETAILED_BEGIN-->
+      {{!-- DETAILED / DETAILED_X2 MODE: Full page previews (max_page_preview_width controls size) --}}
+      {{#unless is_compact_mode}}
+      {{#each pages_sections}}
+      <!--PAGE_{{this.page_number}}_BEGIN-->
+      <div class="page-section" data-page-has-checks="{{#if this.has_visible_checks}}true{{else}}false{{/if}}"
+        style="padding: 0; background: #fefefe; border-top: 1px solid #e5e5e5;{{#if this.has_visible_checks}}{{#unless ../initial_show_pages_with_checks}} display:none;{{/unless}}{{else}}{{#unless ../initial_show_pages_without_checks}} display:none;{{/unless}}{{/if}}">
+        <!-- Page Header -->
+        <div class="page-header" style="background: #f1f5f9; padding: 10px 20px; border-bottom: 1px solid #e5e5e5;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 600; color: #1e293b;">
+              <span data-section="page-filenames"
+                style="{{#unless ../initial_show_page_filenames}}display:none;{{/unless}}">{{this.filename}} &middot;
+              </span>Page {{this.page_number}} of {{../total_pages}}
+            </span>
+            <span data-section="page-summary-icons"
+              style="font-size: 11px; background: {{this.status_bg}}; color: {{this.status_color}}; padding: 2px 8px; border-radius: 9999px; font-weight: 600;{{#unless ../initial_show_page_summary_icons}} display:none;{{/unless}}">
+              {{#if this.has_issues}}{{this.issue_count}} issue{{#if this.issues_plural}}s{{/if}}{{else}}No
+              issues{{/if}}
+            </span>
+          </div>
+        </div>
+
+        <div style="padding: 12px 20px;">
+          {{#if this.has_highlighted_image}}
+          <!-- Page Preview -->
+          <div data-section="page-images"
+            style="text-align: center; margin-bottom: 12px;{{#unless ../initial_show_page_images}} display:none;{{/unless}}">
+            {{#if @root.use_svg_mode}}
+            <div style="display: inline-block; width: {{../max_page_preview_width}}px; max-width: 100%; border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden;">
+              {{{this.highlighted_image}}}
+            </div>
+            {{else}}
+            <div style="display: inline-block; max-width: {{../max_page_preview_width}}px;">
+              <img class="revdoku-img-shimmer" src="data:image/png;base64,{{this.highlighted_image}}"
+                style="width: 100%; height: auto; border: 1px solid #e5e5e5; border-radius: 6px;"
+                alt="Page {{this.page_number}} with highlights" />
+            </div>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          <div data-section="check-details" style="{{#unless ../initial_show_check_details}}display:none;{{/unless}}">
+            {{#if this.has_no_checks}}
+            <!-- No Checks -->
+            <div
+              style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px; text-align: center;">
+              <div style="color: #16a34a; font-size: 13px; font-weight: 500;">No issues found on this page</div>
+            </div>
+            {{/if}}
+
+            {{#if this.show_failed_checks}}
+            {{#if this.failed_checks.length}}
+            <!-- Failed Checks -->
+            <div style="margin-bottom: {{#if this.show_passed_checks}}12px{{else}}0{{/if}};">
+              <h3 style="margin: 0 0 6px 0; font-weight: 600; color: #dc2626;">
+                {{../failed_section_label}} ({{this.failed_checks.length}})</h3>
+              <div style="background: white; border-radius: 6px; border: 1px solid #fecaca; overflow: hidden;">
+                {{#each this.failed_checks}}
+                <div data-check-id="{{this.check_id}}" data-check-passed="false" data-check-filter-type="{{this.check_filter_type}}"
+                  style="padding: 8px 12px; border-bottom: {{#unless @last}}1px solid #fecaca{{else}}none{{/unless}}; background: {{#if @even}}#ffffff{{else}}#fefefe{{/if}};">
+                  <div style="color: #374151; line-height: 1.4;">
+                    <span
+                      style="color: #ffffff; font-weight: 700; margin-right: 6px; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background: {{this.badge_bg_color}}; font-size: 10px; opacity: 0.85;">{{this.rule_order}}</span>
+                    {{#if this.is_recheck}}<span style="color: #6366f1; font-weight: 600; vertical-align: middle;"
+                      title="Re-verification of previously failed check">{{{@root.recheck_icon_svg}}}
+                    </span>{{/if}}{{#if this.is_diff}}<span
+                      style="color: #f59e0b; font-weight: 600; vertical-align: middle;"
+                      title="Cross-revision change detected">{{{@root.changes_icon_svg}}}
+                    </span>{{/if}}{{{renderCheckDescription this.description}}}{{#if this.data_val}}<span data-section="extracted-data" style="font-family:monospace;font-size:0.82em;color:#92400e;margin-left:6px;opacity:0.55;{{#unless @root.initial_show_extracted_data}}display:none;{{/unless}}">val={{this.data_val}}</span>{{/if}}
+                    <small data-section="check-attribution"
+                      style="color: #94a3b8; margin-left: 6px;{{#unless ../../initial_show_check_attribution}} display:none;{{/unless}}">{{this.source_title}}
+                      &middot; {{this.rule_origin_label}}{{#if this.created_by}} &middot;
+                      {{this.created_by}}{{/if}}</small>
+                  </div>
+                  <div data-section="rules"
+                    style="margin-top: 6px; padding: 6px 10px; background: #f8fafc; border-left: 2px solid #cbd5e1; border-radius: 4px; font-size: 11px; color: #6b7280; line-height: 1.3;{{#unless ../../initial_include_rules}} display:none;{{/unless}}">
+                    {{this.rule_prompt}}
+                  </div>
+                </div>
+                {{/each}}
+              </div>
+            </div>
+            {{/if}}
+            {{/if}}
+
+            {{#if this.show_passed_checks}}
+            {{#if this.passed_checks.length}}
+            <!-- Passed Checks -->
+            <div>
+              <h3 style="margin: 0 0 6px 0; font-weight: 600; color: #16a34a;">
+                {{../passed_section_label}} ({{this.passed_checks.length}})</h3>
+              <div style="background: white; border-radius: 6px; border: 1px solid #bbf7d0; overflow: hidden;">
+                {{#each this.passed_checks}}
+                <div data-check-id="{{this.check_id}}" data-check-passed="true" data-check-filter-type="{{this.check_filter_type}}"
+                  style="padding: 8px 12px; border-bottom: {{#unless @last}}1px solid #bbf7d0{{else}}none{{/unless}}; background: {{#if @even}}#ffffff{{else}}#fefefe{{/if}};">
+                  <div style="color: #374151; line-height: 1.4;">
+                    <span
+                      style="color: #ffffff; font-weight: 700; margin-right: 6px; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background: {{this.badge_bg_color}}; font-size: 10px; opacity: 0.85;">{{this.rule_order}}</span>
+                    {{#if this.is_recheck}}<span style="color: #6366f1; font-weight: 600; vertical-align: middle;"
+                      title="Re-verification of previously failed check">{{{@root.recheck_icon_svg}}}
+                    </span>{{/if}}{{#if this.is_diff}}<span
+                      style="color: #f59e0b; font-weight: 600; vertical-align: middle;"
+                      title="Cross-revision change detected">{{{@root.changes_icon_svg}}}
+                    </span>{{/if}}{{{renderCheckDescription this.description}}}{{#if this.data_val}}<span data-section="extracted-data" style="font-family:monospace;font-size:0.82em;color:#92400e;margin-left:6px;opacity:0.55;{{#unless @root.initial_show_extracted_data}}display:none;{{/unless}}">val={{this.data_val}}</span>{{/if}}
+                    <small data-section="check-attribution"
+                      style="color: #94a3b8; margin-left: 6px;{{#unless ../../initial_show_check_attribution}} display:none;{{/unless}}">{{this.source_title}}
+                      &middot; {{this.rule_origin_label}}{{#if this.created_by}} &middot;
+                      {{this.created_by}}{{/if}}</small>
+                  </div>
+                  <div data-section="rules"
+                    style="margin-top: 6px; padding: 6px 10px; background: #f0fdf4; border-left: 2px solid #86efac; border-radius: 4px; font-size: 11px; color: #6b7280; line-height: 1.3;{{#unless ../../initial_include_rules}} display:none;{{/unless}}">
+                    {{this.rule_prompt}}
+                  </div>
+                </div>
+                {{/each}}
+              </div>
+            </div>
+            {{/if}}
+            {{/if}}
+          </div>
+        </div>
+      </div>
+      <!--PAGE_{{this.page_number}}_END-->
+      {{/each}}
+      {{/unless}}
+      <!--PAGES_DETAILED_END-->
+    </div><!-- /group-pages -->
+    <!--PAGES_SECTION_END-->
+
+    <!--FOOTER_SECTION_BEGIN-->
+    <!-- GROUP: FOOTER -->
+    <div data-section-group="group-footer" style="{{#unless initial_show_group_footer}}display:none;{{/unless}}">
+      <!-- Footer -->
+      <div class="report-footer" style="padding: 10px 20px; background: #f8fafc; border-top: 1px solid #e5e5e5;">
+        <!--TECHNICAL_INFO_BEGIN-->
+        <!-- Technical Info & Files Inspected -->
+        <div data-section="technical-info"
+          style="margin-bottom: 10px;{{#unless initial_include_technical_info}} display:none;{{/unless}}">
+          <div
+            style="font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+            Technical Information</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 10px;">
+            <div>
+              <span style="color: #94a3b8; text-transform: uppercase;">Report ID:</span>
+              <span style="color: #475569; font-family: monospace; margin-left: 4px;">{{report_id}}</span>
+            </div>
+            <div>
+              <span style="color: #94a3b8; text-transform: uppercase;">Envelope ID:</span>
+              <span style="color: #475569; font-family: monospace; margin-left: 4px;">{{envelope_id}}</span>
+            </div>
+            <div>
+              <span style="color: #94a3b8; text-transform: uppercase;">Revision:</span>
+              <span style="color: #475569; margin-left: 4px;">{{revision_number}}</span>
+            </div>
+            <div>
+              <span style="color: #94a3b8; text-transform: uppercase;">Generated:</span>
+              <span style="color: #475569; margin-left: 4px;">{{full_date_time}} <span data-section="show-timezone"
+                  style="{{#unless initial_show_timezone}}display:none;{{/unless}}">{{timezone_abbr}}</span></span>
+            </div>
+            {{#if ai_model_display_name}}
+            <div style="grid-column: span 2;">
+              <span style="color: #94a3b8; text-transform: uppercase;">AI:</span>
+              <span style="color: #475569; margin-left: 4px;">{{ai_model_display_name}}</span>
+              {{#if ai_model_actual_id}}<span
+                style="color: #94a3b8; font-family: monospace; font-size: 9px; margin-left: 4px;">| {{#if
+                ai_model_model_name}}{{ai_model_model_name}} {{/if}}({{ai_model_actual_id}}){{#if ai_model_provider}} |
+                {{ai_model_provider}}{{#if ai_model_location}}, {{ai_model_location}}{{/if}}{{/if}}</span>{{/if}}
+            </div>
+            {{/if}}
+          </div>
+
+          <!--AUDIT_LOG_BEGIN-->
+          <!-- Audit Logs / Activity Log -->
+          {{#if has_audit_logs}}
+          <div style="margin-top: 10px; border-top: 1px solid #e5e5e5; padding-top: 10px;">
+            <div
+              style="font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; font-weight: 600;">
+              Activity Log</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+              <thead>
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <th
+                    style="text-align: left; padding: 4px 8px 4px 0; color: #94a3b8; font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; width: 160px;">
+                    Date/Time <span data-section="show-timezone"
+                      style="{{#unless initial_show_timezone}}display:none;{{/unless}}">({{timezone_abbr}})</span></th>
+                  <th
+                    style="text-align: left; padding: 4px 8px; color: #94a3b8; font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Action</th>
+                  <th
+                    style="text-align: right; padding: 4px 0 4px 8px; color: #94a3b8; font-weight: 600; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    User</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each audit_logs}}
+                <tr style="border-bottom: 1px solid #f1f5f9;{{#if @even}} background: #fafbfc;{{/if}}">
+                  <td
+                    style="padding: 3px 8px 3px 0; color: #94a3b8; white-space: nowrap; font-variant-numeric: tabular-nums;">
+                    {{this.datetime}}</td>
+                  <td style="padding: 3px 8px; color: #475569;">{{this.action}}</td>
+                  <td style="padding: 3px 0 3px 8px; color: #64748b; text-align: right; white-space: nowrap;">
+                    {{this.user}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          {{/if}}
+          <!--AUDIT_LOG_END-->
+        </div>
+        <!--TECHNICAL_INFO_END-->
+
+        <!--DOCUMENT_HISTORY_BEGIN-->
+        {{#if has_revisions_history}}
+        <div data-section="document-history"
+          style="margin-bottom: 10px;{{#unless initial_show_document_history}} display:none;{{/unless}}">
+          <div
+            style="font-size: 11px; text-transform: uppercase; color: #94a3b8; margin-bottom: 8px; font-weight: 600;">
+            Document History</div>
+          {{#each revisions_history}}
+          <div
+            style="margin-bottom: 8px; padding: 8px 10px; border-radius: 6px;{{#if this.is_current}} border-left: 3px solid #3b82f6; background: #eff6ff;{{else}} border-left: 3px solid #e2e8f0; background: #f8fafc;{{/if}}">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+              <span style="font-size: 11px; font-weight: 600; color: #1e293b;">Revision {{this.revision_number}}</span>
+              {{#if this.is_current}}<span
+                style="font-size: 9px; font-weight: 600; color: #3b82f6; background: #dbeafe; padding: 1px 6px; border-radius: 3px;">current</span>{{/if}}
+              <span style="font-size: 10px; color: #94a3b8; margin-left: auto;">{{this.formatted_date}}</span>
+            </div>
+            {{#if this.has_comment}}<div
+              style="font-size: 10px; color: #64748b; font-style: italic; margin-bottom: 2px;">{{this.comment}}</div>
+            {{/if}}
+            {{#if this.has_created_by}}<div style="font-size: 9px; color: #94a3b8; margin-bottom: 3px;">by
+              {{this.created_by}}</div>{{/if}}
+            <div style="font-size: 10px; color: #475569;">
+              {{#if this.has_checks}}{{this.page_count}} pages &middot; {{this.total_checks}} checks: <span
+                style="color: #ef4444;">{{this.failed_checks}} failed</span>, <span
+                style="color: #16a34a;">{{this.passed_checks}} passed</span>{{else}}{{#if
+              this.has_report}}{{this.page_count}} pages &middot; No checks{{else}}{{this.page_count}} pages &middot;
+              <span style="color: #94a3b8;">No inspection</span>{{/if}}{{/if}}
+            </div>
+            {{#each this.files}}
+            <div style="font-size: 9px; color: #64748b; padding-left: 8px; margin-top: 1px;">&middot; {{this.name}}
+              ({{this.formatted_size}})</div>
+            {{/each}}
+          </div>
+          {{/each}}
+        </div>
+        {{/if}}
+        <!--DOCUMENT_HISTORY_END-->
+
+        <!--BRANDING_FOOTER_BEGIN-->
+        <!-- Always-visible "Created with Revdoku" footer. Intentionally NOT
+             toggleable — no data-section attribute, no conditional guard. The
+             options panel has no checkbox for it either, and the parent
+             group-footer toggle doesn't list it as a child. -->
+        <div style="background: #f8fafc; border-top: 1px solid #e5e7eb; padding: 14px 24px; text-align: center;">
+          <p style="margin: 0; color: #64748b; font-size: 12px; font-weight: 500; line-height: 1.4;">
+            Report created with
+            <a href="https://revdoku.com/?utm_source=report"
+               style="color: #64748b; text-decoration: none; font-weight: 600;"
+               onmouseover="this.style.textDecoration='underline'"
+               onmouseout="this.style.textDecoration='none'">Revdoku</a>{{#if
+            app_version}}<span style="color: #94a3b8; font-weight: 400;">&nbsp;&middot; v{{app_version}}</span>{{/if}}
+          </p>
+        </div>
+        <!--BRANDING_FOOTER_END-->
+      </div>
+    </div><!-- /group-footer -->
+    <!--FOOTER_SECTION_END-->
+  </div>
+  <!--REPORT_CONTAINER_END-->
+  <!--JAVASCRIPT_BEGIN-->
+  <script>
+    (function () {
+      if (window.parent !== window) return; // React handles interactivity in iframe
+      var btn = document.getElementById('revdoku-gear-btn');
+      var panel = document.getElementById('revdoku-panel');
+      if (!btn || !panel) return;
+      var isOpen = false;
+      btn.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        isOpen = !isOpen;
+        panel.style.display = isOpen ? 'block' : 'none';
+      });
+      document.addEventListener('click', function (e) {
+        if (isOpen && !panel.contains(e.target) && !btn.contains(e.target)) {
+          isOpen = false; panel.style.display = 'none';
+        }
+      });
+
+      // 'default-footer' intentionally omitted — the branding footer is
+      // always visible and has no data-section attribute.
+      var sectionIds = ['envelope-title', 'envelope-datetime', 'envelope-revisions-info',
+        'checklist-ai-model', 'checklist-name', 'compliance-summary', 'compliance-percent',
+        'revision-comparison', 'rules', 'technical-info',
+        'page-images', 'page-filenames', 'check-details', 'page-summary-icons',
+        'check-attribution', 'checklist-info', 'checklist-general-prompt',
+        'checklist-rules-summary', 'checklist-rules-details',
+        'checklist-envelope-rules', 'show-timezone', 'checklist-ai-model-details', 'document-history', 'tags'];
+
+      // Section group toggles — with child disable/enable
+      var groupChildren = {
+        'group-header': ['envelope-title', 'envelope-datetime', 'envelope-revisions-info', 'compliance-percent', 'checklist-ai-model', 'checklist-ai-model-details', 'checklist-name', 'compliance-summary', 'revision-comparison', 'tags'],
+        'group-checklist': ['checklist-info', 'checklist-general-prompt', 'checklist-rules-summary', 'checklist-rules-details', 'checklist-envelope-rules'],
+        'group-pages': ['pages-with-checks', 'pages-without-checks', 'page-images', 'page-filenames', 'check-details', 'rules', 'page-summary-icons', 'check-attribution'],
+        'group-footer': ['technical-info', 'document-history']
+      };
+      function setGroupChildrenDisabled(children, disabled) {
+        children.forEach(function (child) {
+          var childCb = document.getElementById('toggle-' + child);
+          if (!childCb) return;
+          childCb.disabled = disabled;
+          var lbl = childCb.closest('label');
+          if (lbl) lbl.style.opacity = disabled ? '0.4' : '1';
+        });
+      }
+      ['group-header', 'group-checklist', 'group-pages', 'group-footer'].forEach(function (name) {
+        var cb = document.getElementById('toggle-' + name);
+        if (!cb) return;
+        var children = groupChildren[name] || [];
+        // Set initial disabled state
+        if (!cb.checked) setGroupChildrenDisabled(children, true);
+        cb.addEventListener('change', function () {
+          var vis = cb.checked;
+          var els = document.querySelectorAll('[data-section-group="' + name + '"]');
+          els.forEach(function (el) { el.style.display = vis ? '' : 'none'; });
+          setGroupChildrenDisabled(children, !vis);
+          try { window.parent.postMessage({ type: 'revdoku-toggle', section: name, visible: vis }, '*'); } catch (e) { }
+          try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+        });
+      });
+      sectionIds.forEach(function (name) {
+        var cb = document.getElementById('toggle-' + name);
+        if (!cb) return;
+        cb.addEventListener('change', function () {
+          var vis = cb.checked;
+          var els = document.querySelectorAll('[data-section="' + name + '"]');
+          els.forEach(function (el) {
+            if (name === 'checklist-name') {
+              el.style.display = vis ? 'inline' : 'none';
+            } else if (name === 'checklist-ai-model' || name === 'tags') {
+              el.style.display = vis ? 'inline-flex' : 'none';
+            } else {
+              el.style.display = vis ? '' : 'none';
+            }
+          });
+          try { window.parent.postMessage({ type: 'revdoku-toggle', section: name, visible: vis }, '*'); } catch (e) { }
+          try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+        });
+      });
+
+      ['pages-with-checks', 'pages-without-checks'].forEach(function (name) {
+        var cb = document.getElementById('toggle-' + name);
+        if (!cb) return;
+        cb.addEventListener('change', function () {
+          var vis = cb.checked;
+          var attr = name === 'pages-with-checks' ? 'true' : 'false';
+          var els = document.querySelectorAll('[data-page-has-checks="' + attr + '"]');
+          els.forEach(function (el) { el.style.display = vis ? '' : 'none'; });
+          try { window.parent.postMessage({ type: 'revdoku-toggle', section: name, visible: vis }, '*'); } catch (e) { }
+          try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+        });
+      });
+    })();
+
+    // Client-side check filter, highlight mode, and font family switching
+    (function () {
+      function applyCheckFilter(filter) {
+        // Toggle SVG highlight groups
+        document.querySelectorAll('g[data-check-id]').forEach(function (el) {
+          var type = el.getAttribute('data-check-filter-type');
+          var passed = el.getAttribute('data-check-passed') === 'true';
+          var visible = false;
+          switch (filter) {
+            case 'all': visible = true; break;
+            case 'passed': visible = passed; break;
+            case 'failed': visible = !passed; break;
+            case 'failed_only': visible = !passed && type !== 'changes'; break;
+            case 'changes': visible = type === 'changes'; break;
+            case 'rechecks': visible = type === 'recheck'; break;
+            default: visible = !passed; break;
+          }
+          el.style.display = visible ? '' : 'none';
+        });
+        // Toggle check list items
+        document.querySelectorAll('div[data-check-id]').forEach(function (el) {
+          var type = el.getAttribute('data-check-filter-type');
+          var passed = el.getAttribute('data-check-passed') === 'true';
+          var visible = false;
+          switch (filter) {
+            case 'all': visible = true; break;
+            case 'passed': visible = passed; break;
+            case 'failed': visible = !passed; break;
+            case 'failed_only': visible = !passed && type !== 'changes'; break;
+            case 'changes': visible = type === 'changes'; break;
+            case 'rechecks': visible = type === 'recheck'; break;
+            default: visible = !passed; break;
+          }
+          el.style.display = visible ? '' : 'none';
+        });
+        try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+      }
+
+      function applyHighlightMode(mode) {
+        var modes = ['rectangle', 'dot', 'underline', 'bracket'];
+        var activeClass = 'revdoku-hl-' + (modes[mode] || 'rectangle');
+        document.querySelectorAll('.revdoku-hl').forEach(function (el) {
+          el.style.display = el.classList.contains(activeClass) ? '' : 'none';
+        });
+      }
+
+      function applyFontFamily(family) {
+        document.body.style.fontFamily = family;
+        // Also update SVG foreignObject labels
+        document.querySelectorAll('foreignObject div').forEach(function (el) {
+          el.style.fontFamily = family;
+        });
+      }
+
+      // Apply initial check filter
+      var initialFilter = '{{initial_check_filter}}';
+      if (initialFilter && initialFilter !== 'all') {
+        applyCheckFilter(initialFilter);
+      }
+
+      function applyFontScale(scale) {
+        document.querySelectorAll('foreignObject div[data-base-font-size]').forEach(function (el) {
+          var base = parseFloat(el.getAttribute('data-base-font-size'));
+          el.style.fontSize = (base * scale) + 'px';
+        });
+        document.querySelectorAll('span[data-base-badge-size]').forEach(function (el) {
+          var base = parseFloat(el.getAttribute('data-base-badge-size'));
+          var scaled = base * scale;
+          el.style.width = scaled + 'px';
+          el.style.height = scaled + 'px';
+          el.style.fontSize = (scaled * 0.45) + 'px';
+        });
+        try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+      }
+
+      function applyShowAnnotations(show) {
+        document.querySelectorAll('g[data-check-id]').forEach(function (el) {
+          el.style.display = show ? '' : 'none';
+        });
+        try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+      }
+
+      // Store original label positions for toggling align-to-top
+      var originalLabelPositions = null;
+      function captureOriginalPositions() {
+        if (originalLabelPositions) return;
+        originalLabelPositions = {};
+        document.querySelectorAll('g[data-check-id]').forEach(function (g) {
+          var id = g.getAttribute('data-check-id');
+          var bg = g.querySelector('.revdoku-label-bg');
+          var border = g.querySelector('.revdoku-label-border');
+          var text = g.querySelector('.revdoku-label-text');
+          var leaders = g.querySelectorAll('.revdoku-leader');
+          if (!bg || !text) return;
+          originalLabelPositions[id] = {
+            bgY: parseFloat(bg.getAttribute('y')),
+            borderY1: border ? parseFloat(border.getAttribute('y1')) : null,
+            borderY2: border ? parseFloat(border.getAttribute('y2')) : null,
+            textY: parseFloat(text.getAttribute('y')),
+            leaders: Array.from(leaders).map(function (l) {
+              return { y1: parseFloat(l.getAttribute('y1') || l.getAttribute('cy') || '0') };
+            }),
+          };
+        });
+      }
+
+      function applyAlignLabelsToTop(alignToTop) {
+        captureOriginalPositions();
+        var gap = 8;
+        // Process each page SVG independently
+        document.querySelectorAll('svg').forEach(function (svgEl) {
+          var groups = Array.from(svgEl.querySelectorAll('g[data-check-id]'));
+          if (groups.length === 0) return;
+          // Only reposition groups that have labels (not compact badges)
+          var labelGroups = groups.filter(function (g) { return g.querySelector('.revdoku-label-bg'); });
+          if (labelGroups.length === 0) return;
+
+          if (alignToTop) {
+            // Sort by highlight center Y, then stack from top
+            labelGroups.sort(function (a, b) {
+              return parseFloat(a.getAttribute('data-highlight-cy') || '0') -
+                     parseFloat(b.getAttribute('data-highlight-cy') || '0');
+            });
+            var currentY = 5; // small top padding
+            labelGroups.forEach(function (g) {
+              var bg = g.querySelector('.revdoku-label-bg');
+              var border = g.querySelector('.revdoku-label-border');
+              var text = g.querySelector('.revdoku-label-text');
+              var labelH = parseFloat(bg.getAttribute('height'));
+              var oldY = parseFloat(bg.getAttribute('y'));
+              var dy = currentY - oldY;
+              // Move label elements
+              bg.setAttribute('y', String(currentY));
+              if (text) text.setAttribute('y', String(currentY));
+              if (border) {
+                border.setAttribute('y1', String(currentY));
+                border.setAttribute('y2', String(currentY + labelH));
+              }
+              // Update leader line start point (the end near the label)
+              var leaders = g.querySelectorAll('.revdoku-leader');
+              leaders.forEach(function (l) {
+                if (l.tagName === 'line') {
+                  var ly1 = parseFloat(l.getAttribute('y1'));
+                  l.setAttribute('y1', String(ly1 + dy));
+                } else if (l.tagName === 'circle') {
+                  var cy = parseFloat(l.getAttribute('cy'));
+                  l.setAttribute('cy', String(cy + dy));
+                }
+              });
+              currentY += labelH + gap;
+            });
+          } else {
+            // Restore original positions
+            labelGroups.forEach(function (g) {
+              var id = g.getAttribute('data-check-id');
+              var orig = originalLabelPositions[id];
+              if (!orig) return;
+              var bg = g.querySelector('.revdoku-label-bg');
+              var border = g.querySelector('.revdoku-label-border');
+              var text = g.querySelector('.revdoku-label-text');
+              bg.setAttribute('y', String(orig.bgY));
+              if (text) text.setAttribute('y', String(orig.textY));
+              if (border && orig.borderY1 !== null) {
+                border.setAttribute('y1', String(orig.borderY1));
+                border.setAttribute('y2', String(orig.borderY2));
+              }
+              // Restore leader positions
+              var leaders = g.querySelectorAll('.revdoku-leader');
+              leaders.forEach(function (l, i) {
+                if (i < orig.leaders.length) {
+                  if (l.tagName === 'line') l.setAttribute('y1', String(orig.leaders[i].y1));
+                  else if (l.tagName === 'circle') l.setAttribute('cy', String(orig.leaders[i].y1));
+                }
+              });
+            });
+          }
+        });
+        try { window.parent.postMessage({ type: 'revdoku-resize' }, '*'); } catch (e) { }
+      }
+
+      // Expose functions globally for parent iframe access AND postMessage
+      window.revdokuApplyCheckFilter = applyCheckFilter;
+      window.revdokuApplyHighlightMode = applyHighlightMode;
+      window.revdokuApplyFontFamily = applyFontFamily;
+      window.revdokuApplyFontScale = applyFontScale;
+      window.revdokuApplyShowAnnotations = applyShowAnnotations;
+      window.revdokuApplyAlignLabelsToTop = applyAlignLabelsToTop;
+
+      // Listen for postMessage from parent (ReportPopup iframe)
+      window.addEventListener('message', function (e) {
+        if (!e.data || !e.data.type) return;
+        if (e.data.type === 'revdoku-check-filter') applyCheckFilter(e.data.filter);
+        if (e.data.type === 'revdoku-highlight-mode') applyHighlightMode(e.data.mode);
+        if (e.data.type === 'revdoku-font-family') applyFontFamily(e.data.family);
+        if (e.data.type === 'revdoku-font-scale') applyFontScale(e.data.scale);
+        if (e.data.type === 'revdoku-show-annotations') applyShowAnnotations(e.data.show);
+        if (e.data.type === 'revdoku-align-labels-to-top') applyAlignLabelsToTop(e.data.align);
+      });
+    })();
+  </script>
+  <!--JAVASCRIPT_END-->
+  <!--FOOTER_SNIPPET-->
+</body>
+
+</html>

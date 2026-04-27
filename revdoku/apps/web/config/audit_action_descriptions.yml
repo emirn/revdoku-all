@@ -1,0 +1,249 @@
+# Human-readable descriptions for audit log actions.
+# Each entry matches a path pattern + HTTP method to a description template.
+#
+# Templates can reference log data with %{...} placeholders:
+#   %{credits}         — credits charged (from response.credits)
+#   %{envelope_id}     — envelope ID from the log entry
+#   %{params.field}    — from request params
+#   %{response.field}  — from response body
+#
+# model_type: used for icon selection in the frontend (envelope, checklist, report, user, file, check)
+# Unmatched actions fall back to generic REST verb + resource name.
+
+actions:
+  # --- Reports (Inspections) ---
+  - path: "/api/v1/reports"
+    method: POST
+    description: "Ran review"
+    detail: "%{credits} credits"
+    model_type: report
+
+  - path: "/api/v1/reports/*/export"
+    method: POST
+    description: "Exported report"
+    model_type: report
+
+  - path: "/api/v1/reports/*/reset"
+    method: POST
+    description: "Reset inspection"
+    model_type: report
+
+  - path: "/api/v1/reports/*/cancel"
+    method: POST
+    description: "Cancelled inspection"
+    model_type: report
+
+  - path: "/api/v1/reports/*/status"
+    method: GET
+    description: "Checked inspection status"
+    model_type: report
+
+  - path: "/api/v1/reports/*"
+    method: PATCH
+    description: "Updated report settings"
+    model_type: report
+
+  # --- Envelopes ---
+  - path: "/api/v1/envelopes"
+    method: POST
+    description: "Created envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes"
+    method: GET
+    description: "Viewed envelopes list"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*"
+    method: GET
+    description: "Viewed envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*"
+    method: PATCH
+    description: "Updated envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*"
+    method: DELETE
+    description: "Deleted envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*/create_revision"
+    method: POST
+    description: "Created new revision"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*/update_document_files"
+    method: POST
+    description: "Uploaded files"
+    model_type: file
+
+  - path: "/api/v1/envelopes/*/archive"
+    method: POST
+    description: "Archived envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*/unarchive"
+    method: POST
+    description: "Unarchived envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*/duplicate"
+    method: POST
+    description: "Duplicated envelope"
+    model_type: envelope
+
+  - path: "/api/v1/envelopes/*/toggle_star"
+    method: POST
+    description: "Toggled envelope star"
+    model_type: envelope
+
+  # --- Document files ---
+  - path: "/api/v1/envelopes/*/document_files"
+    method: GET
+    description: "Viewed document files"
+    model_type: file
+
+  - path: "/api/v1/document_file_revisions/*"
+    method: GET
+    description: "Viewed file revision"
+    model_type: file
+
+  # --- Checklists ---
+  - path: "/api/v1/checklists"
+    method: POST
+    description: "Created checklist"
+    model_type: checklist
+
+  - path: "/api/v1/checklists"
+    method: GET
+    description: "Viewed checklists"
+    model_type: checklist
+
+  - path: "/api/v1/checklists/generate"
+    method: POST
+    description: "Generated checklist with AI"
+    detail: "%{credits} credits"
+    model_type: checklist
+
+  - path: "/api/v1/checklists/*"
+    method: GET
+    description: "Viewed checklist"
+    model_type: checklist
+
+  - path: "/api/v1/checklists/*"
+    method: PATCH
+    description: "Updated checklist"
+    model_type: checklist
+
+  - path: "/api/v1/checklists/*"
+    method: DELETE
+    description: "Deleted checklist"
+    model_type: checklist
+
+  # --- Checks (manual) ---
+  - path: "/api/v1/reports/*/checks"
+    method: POST
+    description: "Added manual check"
+    model_type: check
+
+  - path: "/api/v1/checks/*"
+    method: PATCH
+    description: "Updated check"
+    model_type: check
+
+  - path: "/api/v1/checks/*"
+    method: DELETE
+    description: "Removed check"
+    model_type: check
+
+  # --- Account / Auth ---
+  - path: "/api/v1/account/update_profile"
+    method: PATCH
+    description: "Updated account settings"
+    model_type: user
+
+  - path: "/api/v1/account/ai_preferences"
+    method: PATCH
+    description: "Changed AI preferences"
+    model_type: user
+
+  - path: "/api/v1/account/invitations"
+    method: POST
+    description: "Invited team member"
+    model_type: user
+
+  - path: "/api/v1/account/members/*"
+    method: DELETE
+    description: "Removed team member"
+    model_type: user
+
+  - path: "/api/v1/account/logout"
+    method: POST
+    description: "Logged out"
+    model_type: user
+
+  - path: "/api/v1/auth"
+    method: POST
+    description: "Logged in"
+    model_type: user
+
+  - path: "/api/v1/me"
+    method: GET
+    description: "Loaded profile"
+    model_type: user
+
+  - path: "/api/v1/ai_models"
+    method: GET
+    description: "Loaded AI models list"
+    model_type: report
+
+  - path: "/api/v1/versions/*"
+    method: GET
+    description: "Viewed version history"
+    model_type: envelope
+
+  # --- Orders / Subscriptions ---
+  - path: "/api/v1/orders"
+    method: POST
+    description: "Purchased credits"
+    model_type: user
+
+  - path: "/api/v1/subscription_plans"
+    method: GET
+    description: "Viewed subscription plans"
+    model_type: user
+
+  # --- Console Access (Security) ---
+  - path: "/console/session_start"
+    description: "Opened Rails console"
+    model_type: user
+
+  - path: "/console/session_end"
+    description: "Closed Rails console"
+    model_type: user
+
+  - path: "/console/bulk_access_alert"
+    description: "Bulk data access detected in console"
+    model_type: user
+
+
+  # --- Admin Actions ---
+  - path: "/admin/accounts/*/set_security_level"
+    method: POST
+    description: "Set account security level to HIGH"
+    model_type: user
+
+  - path: "/admin/accounts/*/enable_hipaa"
+    method: POST
+    description: "Enabled HIPAA compliance"
+    model_type: user
+
+# Fallback: generic REST verb mapping (used when no YAML entry matches)
+fallback_verbs:
+  GET: "Viewed"
+  POST: "Created"
+  PUT: "Updated"
+  PATCH: "Updated"
+  DELETE: "Deleted"

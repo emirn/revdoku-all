@@ -1,0 +1,51 @@
+# Feature flag defaults. Loaded by config/initializers/00_revdoku.rb.
+#
+# Flags are configuration, not deployment toggles. There is no runtime
+# env-var override — to change a flag for a given build, edit this file
+# and ship the change.
+#
+# ERB is still evaluated, but reserve it for values that genuinely belong
+# in deployment config (e.g. derived URLs), not for flag toggles.
+
+# `shared:` is an anchor merged into the edition section below via `<<: *shared`.
+# Keys here are the baseline; the edition block can override any single one.
+shared: &shared
+  # Multi-key API key management. When OFF (default), each user has
+  # exactly one API key that they can view and rotate — no create/delete
+  # UI and no way to generate additional keys through the app. When ON,
+  # users manage multiple named API keys with per-key labels, expiration
+  # windows, and independent revocation.
+  api_key_management: false
+
+  # UI preview features — off by default, enabled per-deploy when ready.
+  diff_viewer: true
+  batch_review: true
+  per_page_view: false
+  sessions_management: false
+  checklist_versions: false
+
+  # Legacy/opt-in features.
+  one_time_credits: false
+
+  # BYOK (per-account AI provider API keys, Account#ai_provider_keys).
+  # Community default: ON — self-host operator adds their own keys via the UI.
+  byok_enabled: true
+
+  # Per-account customisable provider endpoints — the catalog rows that
+  # ship with `custom: true` (today: Custom LLM 1; future Custom LLM 2/3
+  # for additional remote OpenAI-compatible providers). When ON, account
+  # owners can override `base_url` and maintain a per-account models list.
+  # Core self-hosters keep this ON — LM Studio on the same machine is the
+  # flagship zero-cost path.
+  #
+  # SSRF risk: a tenant-supplied base_url means doc-api can be pointed at
+  # arbitrary hosts (including internal cluster URLs). Multi-tenant cloud
+  # deployments should ship a features overlay that flips this OFF.
+  byok_customizable: true
+
+  # HIPAA / high-security track (audit logging, stricter session TTLs,
+  # 2FA enforcement, HIPAA-only model filtering). Off by default.
+  hipaa_mode: false
+
+core:
+  <<: *shared

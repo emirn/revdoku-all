@@ -1,0 +1,4 @@
+web: bin/rails server -p 3000
+css: bin/rails tailwindcss:build && while true; do sleep 86400; done
+vite: bin/vite dev
+worker: bin/jobs

@@ -1,0 +1,3 @@
+The user attached the following reference file(s) for THIS specific review (not declared by the checklist). These are authoritative source-of-truth documents. On EVERY rule where any of these references could apply, you MUST actively cross-reference the primary document against the attached file(s) and emit an additional check in that rule's `checks` array for each deviation you find — even if the rule's plain wording does not explicitly mention the reference. Do not ignore the attached file(s). Do not limit yourself to one check per rule. Silent passes on rules where the attached reference(s) clearly carry relevant terms, rates, approved lists, caps, or scope boundaries are a failure mode.
+
+Attached reference file(s):

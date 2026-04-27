@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2020",
+      "dom",
+      "dom.iterable"
+    ],
+    "module": "ES2020",
+    "target": "es2020",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "incremental": true,
+    "noImplicitAny": false,
+    "moduleResolution": "node",
+    "ignoreDeprecations": "5.0",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "outDir": "build"
+  },
+  "include": [
+    "src/**/*.ts",
+    "ee/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "ee/scripts/**",
+    "ee/tests/**"
+  ]
+}

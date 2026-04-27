@@ -1,0 +1,18 @@
+<div style="margin-bottom:8px"><b>CODE</b> — receives <code>checks</code> array, returns <code>{ data }</code></div>
+<table style="font-size:12px;border-collapse:collapse">
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].passed</code></td><td style="padding:1px 8px;color:#666">boolean</td><td>pass/fail status</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].description</code></td><td style="padding:1px 8px;color:#666">string</td><td>check description</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].page</code></td><td style="padding:1px 8px;color:#666">number</td><td>page number (1-based)</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].rule_id</code></td><td style="padding:1px 8px;color:#666">string</td><td>rule identifier</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].rule_prompt</code></td><td style="padding:1px 8px;color:#666">string</td><td>rule prompt text</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].source</code></td><td style="padding:1px 8px;color:#666">string</td><td>"ai" or "user"</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].data?.val</code></td><td style="padding:1px 8px;color:#666">string</td><td>extracted value</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>checks[].data?.type</code></td><td style="padding:1px 8px;color:#666">string</td><td>change type tags</td></tr>
+</table>
+<div style="margin:8px 0 4px"><code>return { data: { field1: value1, field2: value2 } };</code></div>
+<div style="margin-top:8px"><b>OUTPUT TEMPLATE</b> — Mustache syntax, rendered with data</div>
+<table style="font-size:12px;border-collapse:collapse">
+<tr><td style="padding:1px 8px 1px 0"><code>{{variable}}</code></td><td>insert value</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>{{#each items}}...{{/each}}</code></td><td>loop over array</td></tr>
+<tr><td style="padding:1px 8px 1px 0"><code>{{#if flag}}...{{else}}...{{/if}}</code></td><td>conditional</td></tr>
+</table>

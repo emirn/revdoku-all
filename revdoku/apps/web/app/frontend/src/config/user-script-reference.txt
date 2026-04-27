@@ -1,0 +1,19 @@
+CODE — receives checks array, returns { data }
+
+checks[].passed        boolean    pass/fail status
+checks[].description   string     check description
+checks[].page          number     page number (1-based)
+checks[].rule_id       string     rule identifier
+checks[].rule_prompt   string     rule prompt text
+checks[].source        string     "ai" or "user"
+checks[].data?.val     string     extracted value
+checks[].data?.type    string     change type tags
+
+Return format:
+  return { data: { field1: value1, field2: value2 } };
+
+OUTPUT TEMPLATE — Mustache syntax, rendered with data
+
+{{variable}}                        insert value
+{{#each items}}...{{/each}}         loop over array
+{{#if flag}}...{{else}}...{{/if}}   conditional

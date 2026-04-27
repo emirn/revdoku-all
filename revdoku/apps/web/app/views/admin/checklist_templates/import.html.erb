@@ -1,0 +1,24 @@
+<% @page_title = "Import Checklist Templates" %>
+
+<div class="panel">
+  <h3>Import Checklist Templates from Text</h3>
+
+  <div class="panel_contents">
+    <p style="margin-bottom: 1em; color: #666;">
+      Paste one or more checklists in the text format below. Separate multiple checklists with <code>---</code>.
+      Templates with names matching existing templates will be skipped.
+    </p>
+    <p style="margin-bottom: 1em; color: #666;">
+      <strong>Format:</strong> Line 1 = name, blank line, system prompt paragraph, blank line, rules as bullet points (- or *).
+    </p>
+
+    <%= form_tag do_import_admin_checklist_templates_path, method: :post do %>
+      <div style="margin-bottom: 1em;">
+        <%= text_area_tag :text, nil, rows: 20, style: "width: 100%; font-family: monospace; font-size: 13px;",
+            placeholder: "Invoice Compliance Check\n\nYou are a financial compliance specialist.\n\n- Verify invoice number and date.\n- Check seller and buyer info.\n\n---\n\nResume Review\n\nYou are a resume reviewer.\n\n- Verify contact info.\n- Check work entries." %>
+      </div>
+      <%= submit_tag "Import", class: "button" %>
+      <%= link_to "Cancel", admin_checklist_templates_path, class: "button" %>
+    <% end %>
+  </div>
+</div>

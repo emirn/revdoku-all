@@ -1,0 +1,186 @@
+---
+- - :permit
+  - MIT
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:04.912875000 Z
+- - :permit
+  - Apache 2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:05.411123000 Z
+- - :permit
+  - Apache-2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:05.813414000 Z
+- - :permit
+  - ISC
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:06.214944000 Z
+- - :permit
+  - BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:06.628146000 Z
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:07.031879000 Z
+- - :permit
+  - New BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:07.471146000 Z
+- - :permit
+  - BSD Zero Clause License
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:07.888163000 Z
+- - :permit
+  - BSD-3-Clause
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:08.295720000 Z
+- - :permit
+  - BSD-2-Clause
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:08.711090000 Z
+- - :permit
+  - 0BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:09.116080000 Z
+- - :permit
+  - Python Software Foundation License
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:09.526123000 Z
+- - :permit
+  - CC0-1.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:09.931667000 Z
+- - :permit
+  - CC-BY-3.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:10.336910000 Z
+- - :permit
+  - CC-BY-4.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:10.754561000 Z
+- - :permit
+  - Unlicense
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:11.151417000 Z
+- - :permit
+  - LGPL
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:11.572584000 Z
+- - :permit
+  - LGPLv3
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:11.973762000 Z
+- - :permit
+  - LGPL-3.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:12.385416000 Z
+- - :permit
+  - GPL-3.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:12.798685000 Z
+- - :permit
+  - AGPL-3.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:13.215747000 Z
+- - :permit
+  - MPL-2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:13.623484000 Z
+- - :permit
+  - ruby
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:14.039542000 Z
+- - :permit
+  - Ruby
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:14.449829000 Z
+- - :permit
+  - Zlib
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:14.867995000 Z
+- - :permit
+  - Artistic-2.0
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:15.269189000 Z
+- - :permit
+  - "(MIT OR CC0-1.0)"
+  - :who:
+    :why:
+    :versions: []
+    :when: 2026-04-27 09:23:15.672366000 Z
+- - :permit
+  - Python-2.0
+  - :who: claude
+    :why: Python Software Foundation v2.0 — GPL-compatible per FSF (https://www.gnu.org/licenses/license-list.html).
+      AGPL-compatible.
+    :versions: []
+    :when: 2026-04-27 10:24:41.754105000 Z
+- - :permit
+  - BlueOak-1.0.0
+  - :who: claude
+    :why: Blue Oak Model License 1.0.0 — OSI-approved permissive license (MIT-equivalent).
+      AGPL-compatible.
+    :versions: []
+    :when: 2026-04-27 10:24:42.200245000 Z
+- - :approve
+  - brakeman
+  - :who: claude
+    :why: 'Development-only static analyzer (gem ''brakeman'', require: false in :development,
+      :test group). Brakeman Public Use License is non-standard but the gem is never
+      bundled into the production Core distribution and never required at runtime
+      — it does not propagate to AGPL-licensed redistributions.'
+    :versions: []
+    :when: 2026-04-27 10:24:42.635799000 Z

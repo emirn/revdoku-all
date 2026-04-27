@@ -1,0 +1,11 @@
+node_modules/
+.env
+.DS_Store
+build
+logs/
+
+# Tesseract OCR language data — was pre-committed as a 5 MB binary cache
+# when tesseract.js was used by test scripts that have since been removed.
+# Keep this ignore so anyone re-adding tesseract.js doesn't accidentally
+# re-commit the blob — it's fetched from the tessdata CDN at runtime.
+*.traineddata
