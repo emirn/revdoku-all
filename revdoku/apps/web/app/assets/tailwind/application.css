@@ -1,3 +1,0 @@
-@import "tailwindcss";
-@source "../../views/**/*.erb";
-@custom-variant dark (&:where(.dark, .dark *));

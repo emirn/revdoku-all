@@ -1,6 +1,0 @@
-schemas: cd apps/shared/js-packages/revdoku-lib && npm run watch
-web:     cd apps/web && bin/rails server -p 3000
-vite:    cd apps/web && bin/vite dev
-css:     cd apps/web && bin/rails tailwindcss:build && while true; do sleep 86400; done
-worker:  cd apps/web && bundle exec rake solid_queue:start
-revdoku-doc-api: cd apps/services/revdoku-doc-api && npm run dev
