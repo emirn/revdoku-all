@@ -2,3 +2,4 @@
 *.env.local
 .env.*
 .claude
+.playwright-mcp
