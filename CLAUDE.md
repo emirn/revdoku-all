@@ -138,6 +138,25 @@ The `bin/dev` script provides a development environment:
 - Access the React frontend at `http://localhost:3000/envelopes`
 - Vite provides hot module replacement (HMR) for React components
 
+#### Production-mode verification (`bin/start`, EE-only)
+```bash
+./bin/start              # rebuild assets only when stale, runs on port 3001
+./bin/start --rebuild    # force `npm run build`
+```
+Boots Rails in `RAILS_ENV=production` against the dev SQLite databases
+(`apps/web/storage/development*.sqlite3`). Real CSP, real Cloudflare
+Turnstile (defaults to the always-pass test sitekey
+`1x00000000000000000000AA`), real asset digests, no Vite dev server, no
+mock helpers. The dev data — `admin@gmail.com`, existing envelopes — is
+preserved because we point `DATABASE_PATH` etc. at the dev files.
+
+Use this when reproducing a bug that only shows up in production mode
+(e.g. a third-party script that the dev mocks bypass, an asset-pipeline
+issue, or a CSP nonce/hash mismatch). It is **not** a deployment surface
+— actual production goes via Kamal / CI. The Core overlay's
+`core/bin/start` (Docker compose wrapper) wins during `build-core.sh`,
+so this EE script is naturally edition-scoped.
+
 ### Frontend Development (Integrated with Rails)
 ```bash
 cd apps/web
